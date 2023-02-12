@@ -4,8 +4,10 @@ The alias `Systems` is exported by `DynamicalSystems`.
 
 This module is provided purely as a convenience.
 Nothing here is tested, nor guaranteed to be stable in future versions.
+It is not recommended to use this module for anything else besides
+on-the-spot demonstrative examples.
 
-Predefined systems exist functions that
+Predefined systems exist as functions that
 return a `DynamicalSystem` instance. They are accessed like:
 ```julia
 ds = PredefinedDynamicalSystems.lorenz(u0; ρ = 32.0)
