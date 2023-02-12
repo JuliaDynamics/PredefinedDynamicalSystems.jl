@@ -1,6 +1,6 @@
-name = "DynamicalSystemsBase"
-uuid = "6e36e845-645a-534a-86f2-f5d4aa5a06b4"
-repo = "https://github.com/JuliaDynamics/DynamicalSystemsBase.jl.git"
+name = "PredefinedDynamicalSystems"
+uuid = "31e2f376-db9e-427a-b76e-a14f56347a14"
+repo = "https://github.com/JuliaDynamics/PredefinedDynamicalSystems.jl.git"
 version = "3"
 
 [deps]
