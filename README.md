@@ -20,7 +20,7 @@ It is not recommended to use this module for anything else besides
 on-the-spot demonstrative examples.**
 
 For some systems, a Jacobian function is also defined.
-The naming convention for the jacobian function is `\$(name)_jacob`.
+The naming convention for the Jacobian function is `\$(name)_jacob`.
 So, for the above example we have `J = Systems.lorenz_jacob`.
 
 All available systems are provided in the documentation, which you can either find [online](https://juliadynamics.github.io/PredefinedDynamicalSystems.jl/dev/) or build locally by running the `docs/make.jl` file.

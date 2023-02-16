@@ -6,3 +6,4 @@ deps/build.log
 Manifest.toml
 *.scss
 *.css
+*style.jl
