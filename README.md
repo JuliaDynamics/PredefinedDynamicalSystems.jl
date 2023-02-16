@@ -14,8 +14,7 @@ ds = PredefinedDynamicalSystems.lorenz(u0; ρ = 32.0)
 ```
 The alias `Systems` is also exported as a deprecation.
 
-**This module is provided purely as a convenience.
-Nothing here is tested, nor guaranteed to be stable in future versions.
+**This module is provided purely as a convenience. It does not have any actual tests, and it is not guaranteed to be stable in future versions.
 It is not recommended to use this module for anything else besides
 on-the-spot demonstrative examples.**
 
