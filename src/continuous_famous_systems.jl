@@ -230,30 +230,15 @@ The function `Systems.henonheiles_ics(E, n)` generates a grid of
 
 [^HénonHeiles1964]: Hénon, M. & Heiles, C., The Astronomical Journal **69**, pp 73–79 (1964)
 """
-function henonheiles(u0=[0, -0.25, 0.42081, 0]#=; conserveE::Bool = true=#)
-    i = one(eltype(u0))
-    o = zero(eltype(u0))
-    J = zeros(eltype(u0), 4, 4)
-    return CDS(hhrule!, u0, nothing, hhjacob!, J)
+function henonheiles(u0=[0, -0.25, 0.42081, 0])
+    return CDS(henonheiles_rule, u0, nothing)
 end
-function hhrule!(du, u, p, t)
-    @inbounds begin
-        du[1] = u[3]
-        du[2] = u[4]
-        du[3] = -u[1] - 2u[1]*u[2]
-        du[4] = -u[2] - (u[1]^2 - u[2]^2)
-        return nothing
-    end
-end
-function hhjacob!(J, u, p, t)
-    @inbounds begin
-    o = 0.0; i = 1.0
-    J[1,:] .= (o,    o,     i,    o)
-    J[2,:] .= (o,    o,     o,    i)
-    J[3,:] .= (-i - 2*u[2],   -2*u[1],   o,   o)
-    J[4,:] .= (-2*u[1],  -1 + 2*u[2],  o,   o)
-    return nothing
-    end
+@inbounds function henonheiles_rule(u, p, t)
+    du1 = u[3]
+    du2 = u[4]
+    du3 = -u[1] - 2u[1]*u[2]
+    du4 = -u[2] - (u[1]^2 - u[2]^2)
+    return SVector(du1, du2, du3, du4)
 end
 _hhenergy(x,y,px,py) = 0.5(px^2 + py^2) + _hhpotential(x,y)
 _hhpotential(x, y) = 0.5(x^2 + y^2) + (x^2*y - (y^3)/3)
