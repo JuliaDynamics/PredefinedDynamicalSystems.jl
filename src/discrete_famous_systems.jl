@@ -226,10 +226,10 @@ function's documentation string.
 [2] : M. J. Feigenbaum, J. Stat. Phys. **19**, pp 25 (1978)
 """
 function logistic(x0=0.4; r = 4.0)
-    return DDS(logistic_rule, x0, [r], logistic_jacob)
+    return DDS(logistic_rule, SVector(x0), [r])
 end
-logistic_rule(x, p, n) = p[1]*x*(1-x)
-logistic_jacob(x, p, n) = p[1]*(1-2x)
+logistic_rule(x, p, n) = @inbounds SVector(p[1]*x[1]*(1 - x[1]))
+logistic_jacob(x, p, n) = @inbounds SMatrix{1,1}(p[1]*(1 - 2x[1]))
 
 """
     pomaeu_manneville(u0 = 0.2; z = 2.5)
