@@ -1,6 +1,6 @@
 # PredefinedDynamicalSystems.jl
 
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaDynamics.github.io/PredefinedDynamicalSystems.jl/dev)
+[![](https://img.shields.io/badge/docs-online-blue.svg)](https://JuliaDynamics.github.io/PredefinedDynamicalSystems.jl/dev)
 [![CI](https://github.com/JuliaDynamics/PredefinedDynamicalSystems.jl/workflows/CI/badge.svg)](https://github.com/JuliaDynamics/PredefinedDynamicalSystems.jl/actions?query=workflow%3ACI)
 [![Package Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/PredefinedDynamicalSystems)](https://pkgs.genieframework.com?packages=PredefinedDynamicalSystems)
 
