@@ -28,20 +28,17 @@ function lorenz(u0=[0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3)
     return CDS(lorenz_rule, u0, [σ, ρ, β])
 end
 const lorenz63 = lorenz
-function lorenz_rule(u, p, t)
-    @inbounds begin
+@inbounds function lorenz_rule(u, p, t)
         σ = p[1]; ρ = p[2]; β = p[3]
         du1 = σ*(u[2]-u[1])
         du2 = u[1]*(ρ-u[3]) - u[2]
         du3 = u[1]*u[2] - β*u[3]
         return SVector{3}(du1, du2, du3)
-    end
 end
-function lorenz_jacob(u, p, t)
-    @inbounds begin
+@inbounds function lorenz_jacob(u, p, t)
+
         σ, ρ, β = p
         return SMatrix{3,3}(-σ, ρ - u[3], u[2], σ, -1, u[1], 0, -u[1], -β)
-    end
 end
 
 
@@ -82,20 +79,19 @@ function's documentation string.
 
 """
 function chua(u0 = [0.7, 0.0, 0.0]; a = 15.6, b = 25.58, m0 = -8/7, m1 = -5/7)
-    return CDS(chua_rule, u0, [a, b, m0, m1], chua_jacob)
+    return CDS(chua_rule, u0, [a, b, m0, m1])
 end
-function chua_rule(u, p, t)
-    @inbounds begin
+@inbounds function chua_rule(u, p, t)
+
     a, b, m0, m1 = p
     du1 = a * (u[2] - u[1] - chua_element(u[1], m0, m1))
     du2 = u[1] - u[2] + u[3]
     du3 = -b * u[2]
     return SVector{3}(du1, du2, du3)
-    end
 end
 function chua_jacob(u, p, t)
     a, b, m0, m1 = p
-    return @SMatrix[-a*(1 + chua_element_derivative(u[1], m0, m1)) a 0;
+    return SMatrix[-a*(1 + chua_element_derivative(u[1], m0, m1)) a 0;
                     1 -1 1;
                     0 -b 0]
 end
@@ -133,20 +129,19 @@ function's documentation string.
 [^Rössler1976]: O. E. Rössler, Phys. Lett. **57A**, pp 397 (1976)
 """
 function roessler(u0=[1, -2, 0.1]; a = 0.2, b = 0.2, c = 5.7)
-    return CDS(roessler_rule, u0, [a, b, c], roessler_jacob)
+    return CDS(roessler_rule, u0, [a, b, c])
 end
-function roessler_rule(u, p, t)
-    @inbounds begin
+@inbounds function roessler_rule(u, p, t)
+    
     a, b, c = p
     du1 = -u[2]-u[3]
     du2 = u[1] + a*u[2]
     du3 = b + u[3]*(u[1] - c)
     return SVector{3}(du1, du2, du3)
-    end
 end
 function roessler_jacob(u, p, t)
     a, b, c = p
-    return @SMatrix [0.0 (-1.0) (-1.0);
+    return SMatrix[0.0 (-1.0) (-1.0);
                      1.0 a 0.0;
                      u[3] 0.0 (u[1]-c)]
 end
@@ -301,11 +296,10 @@ The default initial condition is chaotic.
 function qbh(u0=[0., -2.5830294658973876, 1.3873470962626937, -4.743416490252585];  A=1., B=0.55, D=0.4)
     return CDS(qrule, u0, [A, B, D])
 end
-function qrule(z, p, t)
-    @inbounds begin
+@inbounds function qrule(z, p, t)
+
         A, B, D = p
-        p₀, p₂ = z[1], z[2]
-        q₀, q₂ = z[3], z[4]
+        p₀, p₂, q₀, q₂ = z
 
         return SVector{4}(
             -A * q₀ - 3 * B / √2 * (q₂^2 - q₀^2) - D * q₀ * (q₀^2 + q₂^2),
@@ -313,7 +307,6 @@ function qrule(z, p, t)
             A * p₀,
             A * p₂
         )
-    end
 end
 
 """
@@ -420,7 +413,7 @@ function's documentation string.
 [^Gissinger2012]: C. Gissinger, Eur. Phys. J. B **85**, 4, pp 1-12 (2012)
 """
 function gissinger(u0 = [3, 0.5, 1.5]; μ = 0.119, ν = 0.1, Γ = 0.9)
-    return CDS(gissinger_rule, u0, [μ, ν, Γ], gissinger_jacob)
+    return CDS(gissinger_rule, u0, [μ, ν, Γ])
 end
 function gissinger_rule(u, p, t)
     μ, ν, Γ = p
@@ -431,7 +424,7 @@ function gissinger_rule(u, p, t)
 end
 function gissinger_jacob(u, p, t)
     μ, ν, Γ = p
-    return @SMatrix [μ -u[3] -u[2];
+    return SMatrix[μ -u[3] -u[2];
                      u[3] -ν u[1];
                      u[2] u[1] -1]
 end
@@ -453,7 +446,7 @@ reversal events by means of a double-disk dynamo system.
 [^Rikitake1958]: T. Rikitake Math. Proc. Camb. Phil. Soc. **54**, pp 89–105, (1958)
 """
 function rikitake(u0 = [1, 0, 0.6]; μ = 1.0, α = 1.0)
-    return CDS(rikitake_rule, u0, [μ, α], rikitake_jacob)
+    return CDS(rikitake_rule, u0, [μ, α])
 end
 function rikitake_rule(u, p, t)
     μ, α = p
@@ -469,7 +462,7 @@ function rikitake_jacob(u, p, t)
     xdot = -μ*x + y*z
     ydot = -μ*y + x*(z - α)
     zdot = 1 - x*y
-    return @SMatrix [-μ  z  y;
+    return SMatrix[-μ  z  y;
                      z-α -μ x;
                      -y  -x 0]
 end
@@ -500,7 +493,7 @@ See Chapter 4 of "Elegant Chaos" by J. C. Sprott. [^Sprott2010]
     Sprott, J. C. (2010). *Elegant chaos: algebraically simple chaotic flows*.
     World Scientific.
 """
-nosehoover(u0 = [0, 0.1, 0]) = CDS(nosehoover_rule, u0, nothing, nosehoover_jacob)
+nosehoover(u0 = [0, 0.1, 0]) = CDS(nosehoover_rule, u0, nothing)
 function nosehoover_rule(u, p, t)
     x,y,z = u
     xdot = y
@@ -510,7 +503,7 @@ function nosehoover_rule(u, p, t)
 end
 function nosehoover_jacob(u, p, t)
     x,y,z = u
-    return @SMatrix [0 1 0;
+    return SMatrix[0 1 0;
                      -1 z y;
                      0 -2y 0]
 end
@@ -549,7 +542,7 @@ diameter is 1.
 """
 function antidots(u0 = [0.5, 0.5, 0.25, 0.25];
     d0 = 0.5, c = 0.2, B = 1.0)
-    return CDS(antidot_rule, u0, [B, d0, c], antidot_jacob)
+    return CDS(antidot_rule, u0, [B, d0, c])
 end
 
 function antidot_rule(u, p, t)
@@ -640,7 +633,7 @@ J. C. Sprott. [^Sprott2010]
     World Scientific.
 """
 function ueda(u0 = [3.0, 0]; k = 0.1, B = 12.0)
-    return CDS(ueda_rule, u0, [k, B], ueda_jacob)
+    return CDS(ueda_rule, u0, [k, B])
 end
 function ueda_rule(u, p, t)
     x,y = u
@@ -652,7 +645,7 @@ end
 function ueda_jacob(u, p, t)
     x,y = u
     k, B = p
-    return @SMatrix [0      1;
+    return SMatrix[0      1;
                      -3*x^2 -k]
 end
 
@@ -805,8 +798,7 @@ between the boxes (polar and equatorial ocean basins) and ``\\eta_i`` are parame
     Stommel, Thermohaline convection with two stable regimes of flow. Tellus, 13(2)
 """
 function stommel_thermohaline(u = [0.3, 0.2]; η1 = 3.0, η2 = 1, η3 = 0.3)
-    ds = ContinuousDynamicalSystem(stommel_thermohaline_rule, u, [η1, η2, η3],
-    stommel_thermohaline_jacob)
+    ds = ContinuousDynamicalSystem(stommel_thermohaline_rule, u, [η1, η2, η3])
 end
 function stommel_thermohaline_rule(x, p, t)
     T, S = x
@@ -819,10 +811,10 @@ function stommel_thermohaline_jacob(x, p, t)
     η1, η2, η3 = p
     q = abs(T-S)
     if T ≥ S
-        return @SMatrix [(-1 - 2T + S)  (T);
+        return SMatrix[(-1 - 2T + S)  (T);
                          (-S)  (-η3 - T + 2S)]
     else
-        return @SMatrix [(-1 + 2T - S)  (-T);
+        return SMatrix[(-1 + 2T - S)  (-T);
                          (+S)  (-η3 + T - 2S)]
     end
 end
@@ -867,7 +859,7 @@ end
 function lorenz84_rule_jacob(u, p, t)
     F, G, a, b = p
 	x, y, z = u
-    return @SMatrix [(-a)  (-2y)  (-2z);
+    return SMatrix[(-a)  (-2y)  (-2z);
                      y-b*z  x-1  (-b*x);
                      b*y+z  b*x   x-1]
 end
@@ -901,8 +893,7 @@ bsn, att = basins_of_attraction((xg, yg), pmap)
     Int. Jour. Bifurcation and Chaos 24, 1450009 (2014)
 """
 function lorenzdl(u = [0.1, 0.1, 0.1]; R=4.7)
-    return ContinuousDynamicalSystem(lorenzdl_rule, u, R,
-    lorenzdl_rule_jacob)
+    return ContinuousDynamicalSystem(lorenzdl_rule, u, R)
 end
 @inline @inbounds function lorenzdl_rule(u, p, t)
     R = p
@@ -914,7 +905,7 @@ end
 end
 function lorenzdl_rule_jacob(u, p, t)
     x, y, z = u
-    return @SMatrix [-1     1     0;
+    return SMatrix[-1     1     0;
                      -z     0    -x;
                       y     x     0]
 end
@@ -1011,8 +1002,7 @@ In the original paper there were no parameters, which are added here for explora
 """
 function sprott_dissipative_conservative(u0 = [1.0, 0, 0]; a = 2, b = 1, c = 1)
     return CDS(
-        sprott_dissipative_conservative_f, u0, [a, b, c], sprott_dissipative_conservative_J
-    )
+        sprott_dissipative_conservative_f, u0, [a, b, c])
 end
 
 function sprott_dissipative_conservative_f(u, p, t)
@@ -1023,10 +1013,10 @@ function sprott_dissipative_conservative_f(u, p, t)
     dz = c*x - x^2 - y^2
     return SVector(dx, dy, dz)
 end
-function sprott_dissipative_conservative_J(u, p, t)
+function sprott_dissipative_conservative_jacob(u, p, t)
     a, b, c = p
     x, y, z = u
-    return @SMatrix [a*y + z     1 + a*x     +x;
+    return SMatrix[a*y + z     1 + a*x     +x;
                     -4x     b*z    b*y;
                     (c - 2x)    (-2y)  0]
 end
@@ -1133,23 +1123,21 @@ oscillations. Setting `\\mu=8.53` generates chaotic oscillations.
     The London, Edinburgh and Dublin Phil. Mag. & J. of Sci., 2(7), 978–992.
 """
 function vanderpol(u0=[0.5, 0.0]; μ=1.5, F=1.2, T=10)
-    return CDS(vanderpol_rule, u0, [μ, F, T], vanderpol_jac)
+    return CDS(vanderpol_rule, u0, [μ, F, T])
 end
-function vanderpol_rule(u, p, t)
-    @inbounds begin
+@inbounds function vanderpol_rule(u, p, t)
+
         μ, F, T = p
         du1 = u[2]
         du2 = μ*(1 - u[1]^2)*u[2] - u[1] + F*sin(2π*t/T)
         return SVector{2}(du1, du2)
-    end
 end
-function vanderpol_jac(u, p, t)
-    @inbounds begin
+@inbounds function vanderpol_jacob(u, p, t)
+
         μ = p[1]
-        J = @SMatrix [0 1;
+        J = SMatrix[0 1;
         (-μ*(2*u[1]-1)*u[2]-1) (μ*(1 - u[1]^2))]
         return J
-    end
 end
 
 """
@@ -1181,23 +1169,21 @@ oscillations.
     https://mathworld.wolfram.com/Lotka-VolterraEquations.html
 """
 function lotkavolterra(u0=[10.0, 5.0]; α = 1.5, β = 1, δ=1, γ=3)
-    return CDS(lotkavolterra_rule, u0, [α, β, δ, γ], lotkavolterra_jac)
+    return CDS(lotkavolterra_rule, u0, [α, β, δ, γ])
 end
-function lotkavolterra_rule(u, p, t)
-    @inbounds begin
+@inbounds function lotkavolterra_rule(u, p, t)
+     
         α, β, δ, γ = p
         du1 = α*u[1] - β*u[1]*u[2]
         du2 = δ*u[1]*u[2] - γ*u[2]
         return SVector{2}(du1, du2)
-    end
 end
-function lotkavolterra_jac(u, p, t)
-    @inbounds begin
+@inbounds function lotkavolterra_jacob(u, p, t)
+
         α, β, δ, γ = p
-        J = @SMatrix [(α - β*u[2]) (-β*u[1]);
+        J = SMatrix[(α - β*u[2]) (-β*u[1]);
         (δ*u[2]) (δ*u[1] - γ)]
         return J
-    end
 end
 
 """
@@ -1227,25 +1213,23 @@ periodic bursting.
     Proc. R. Soc. Lond. B 221, 87-102.
 """
 function hindmarshrose(u0=[-1.0, 0.0, 0.0]; a=1, b=3, c=1, d=5, r=0.001, s=4, xr=-8/5, I=2.0)
-    return CDS(hindmarshrose_rule, u0, [a,b,c,d,r,s,xr, I], hindmarshrose_jac)
+    return CDS(hindmarshrose_rule, u0, [a,b,c,d,r,s,xr, I])
 end
-function hindmarshrose_rule(u, p, t)
-    @inbounds begin
+@inbounds function hindmarshrose_rule(u, p, t)
+
         a,b,c,d,r,s, xr, I = p
         du1 = u[2] - a*u[1]^3 + b*u[1]^2 -u[3] + I
         du2 = c - d*u[1]^2 - u[2]
         du3 = r*(s*(u[1] - xr) - u[3])
         return SVector{3}(du1, du2, du3)
-    end
 end
-function hindmarshrose_jac(u, p, t)
-    @inbounds begin
+@inbounds function hindmarshrose_jacob(u, p, t)
+
         a,b,c,d,r,s, xr, I = p
-        J = @SMatrix [(-3*a*u[1]^2 + 2*b*u[1]) 1 -1;
+        J = SMatrix[(-3*a*u[1]^2 + 2*b*u[1]) 1 -1;
         -2*d*u[1] -1 0;
         r*s 0 -r]
         return J
-    end
 end
 
 """
@@ -1256,26 +1240,31 @@ k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
 ```
 ```math
 \\begin{aligned}
-\\dot x_{i} = y_{i} + bx^{2}_{i} - ax^{3}_{i} - z_{i} + I - k_{i}(x_{i} - v_{s})\\Gamma(x_{j}) + k(x_{j} - x_{i})\\\\
-\\dot y_{i} = c - d x^{2}_{i} - y_{i}\\\\
-\\dot z_{i} = r[s(x_{i} - x_{R}) - z_{i}]\\\\
-\\i,j=1,2 (i\\neq j).\\\\
+\\dot{x_{i}} = y_{i} + bx^{2}_{i} - ax^{3}_{i} - z_{i} + I - k_{i}(x_{i} - v_{s})\\Gamma(x_{j}) + k(x_{j} - x_{i}), \\\\
+\\dot{y_{i}} = c - d x^{2}_{i} - y_{i}, \\\\
+\\dot{z_{i}} = r[s(x_{i} - x_{R}) - z_{i}]\\\\
+\\i,j=1,2 (i\\neq j).
 \\end{aligned}
 ```
 
 The two coupled Hindmarsh Rose element by chemical and electrical synapse.
 it is modelling the dynamics of a neuron's membrane potential.
 The default parameter values are taken from article "Dragon-king-like extreme events in
-coupled bursting neurons", DOI:https://doi.org/10.1103/PhysRevE.97.062311.
+coupled bursting neurons", [^Mishra2018].
+
+[^Mishra2018]:
+    Mishra A. et al(2018)
+    "Dragon-king-like extreme events in coupled bursting neurons",
+     Physical Review E 97.6.
 """
 function hindmarshrose_two_coupled(u0=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
-			a = 1.0, b = 3.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
+            a = 1.0, b = 3.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
 			k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
 	return CDS(hindmarshrose_coupled_rule, u0, [a, b, c, d, r, s, xr, I, k1, k2, k_el, xv])
 end
 function hindmarshrose_coupled_rule(u, p, t)
     function sigma(x)
-        return @fastmath 1.0 / ( 1.0 + exp( -10.0 * ( x  - ( - 0.25 ) ) ) )
+        return 1.0 / ( 1.0 + exp( -10.0 * ( x  - ( - 0.25 ) ) ) )
     end
     a, b, c, d, r, s, xr, I, k1, k2, k_el, xv = p
     x1, y1, z1, x2, y2, z2 = u
@@ -1330,23 +1319,21 @@ radius `\\sqrt(\\mu)`.
     Boulder, CO :Westview Press, a member of the Perseus Books Group (2015).
 """
 function stuartlandau_oscillator(u0=[1.0, 0.0]; μ=1.0, ω=1.0, b=1)
-    return CDS(stuartlandau_rule, u0, [μ, ω, b], stuartlandau_jac)
+    return CDS(stuartlandau_rule, u0, [μ, ω, b])
 end
-function stuartlandau_rule(u, p, t)
-    @inbounds begin
+@inbounds function stuartlandau_rule(u, p, t)
+
         μ, ω, b = p
         du1 = u[1]*(μ - u[1]^2 - u[2]^2) - ω*u[2] - b*(u[1]^2 + u[2]^2)*u[2]
         du2 = u[2]*(μ - u[1]^2 - u[2]^2) + ω*u[1] + b*(u[1]^2 + u[2]^2)*u[1]
         return SVector{2}(du1, du2)
-    end
 end
-function stuartlandau_jac(u, p, t)
-    @inbounds begin
+@inbounds function stuartlandau_jacob(u, p, t)
+     
         μ, ω, b = p
-        J = @SMatrix [(μ - 3*u[1]^2 -u[2]^2 -2*b*u[1]*u[2]) (-2*u[1]*u[2] -ω -b*u[1]^2 -3*b*u[2]^2);
+        J = SMatrix[(μ - 3*u[1]^2 -u[2]^2 -2*b*u[1]*u[2]) (-2*u[1]*u[2] -ω -b*u[1]^2 -3*b*u[2]^2);
             (-2*u[1]*u[2] +ω +b*u[2]^2 +3*b*u[1]^2) (μ -u[1]^2 -3*u[2]^2 +2*b*u[1]*u[2])]
         return J
-    end
 end
 
 
@@ -1390,12 +1377,11 @@ of an attractor A there is a point of the basin of attraction of another attract
     Ott. et al., [The transition to chaotic attractors with riddled basins](http://yorke.umd.edu/Yorke_papers_most_cited_and_post2000/1994_04_Ott_Alexander_Kan_Sommerer_PhysicaD_riddled%20basins.pdf)
 """
 function riddled_basins(u0=[0.5, 0.6, 0, 0];
-        γ=0.05, x̄ = 1.9, f₀=2.3, ω =3.5, x₀=1.0, y₀=0.0
-    )
+        γ=0.05, x̄ = 1.9, f₀=2.3, ω =3.5, x₀=1.0, y₀=0.0)
     return CDS(riddled_basins_rule, u0, [γ, x̄, f₀, ω, x₀, y₀])
 end
-function riddled_basins_rule(u, p, t)
-    @inbounds begin
+@inbounds function riddled_basins_rule(u, p, t)
+    
         γ, x̄, f₀, ω, x₀, y₀ = p
         x, y, dx, dy = u
         du1 = dx
@@ -1403,7 +1389,6 @@ function riddled_basins_rule(u, p, t)
         du3 = -γ*dx -(-4*x*(1-x^2) + y^2) +  f₀*sin(ω*t)*x₀
         du4 = -γ*dy -(2*y*(x+x̄)) +  f₀*sin(ω*t)*y₀
         return SVector{4}(du1, du2, du3, du4)
-    end
 end
 
 """
@@ -1479,20 +1464,16 @@ Its attractor arises due to merging of two disjoint bistable attractors [^Li2015
     IEICE Electronics Express 12.4.
 """
 function sakarya(u0= [-2.8976045, 3.8877978, 3.07465];
-    a = 1,
-    b = 1,
-    m = 1
-)
+     a = 1, b = 1, m = 1)
     return CDS(sakarya_rule, u0, [a,b,m])
 end
 
-function sakarya_rule(u, p, t)
-    @inbounds begin
+@inbounds function sakarya_rule(u, p, t)
+
         a, b, m = p
         du1 = a*u[1] + u[2] + u[2]*u[3]
         du2 = - u[1]*u[3] + u[2]*u[3]
         du3 = - u[3] - m*u[1]*u[2] + b
-    end
     return SVector{3}(du1, du2, du3)
 end
 
@@ -1521,11 +1502,7 @@ Lorenz system bounded by a confining potential [^SprottXiong2015].
     Chaos: An Interdisciplinary Journal of Nonlinear Science, 25(8), 083101.
 """
 function lorenz_bounded(u0=[-13.284881, -12.444334, 34.188198];
-    beta = 2.667,
-    r = 64.0,
-    rho = 28.0,
-    sigma = 10.0
-)
+    beta = 2.667, r = 64.0, rho = 28.0, sigma = 10.0)
     return CDS(lorenzbounded_rule, u0, [beta,r,rho,sigma])
 end
 
@@ -1564,8 +1541,8 @@ function swinging_atwood(u0=[0.113296,1.5707963267948966,0.10992,0.17747]; m1=1.
     return CDS(swingingatwood_rule, u0, [m1, m2])
 end
 
-function swingingatwood_rule(u, p, t)
-    @inbounds begin
+@inbounds function swingingatwood_rule(u, p, t)
+
         m1, m2 = p
         r, th, pr, pth = u
         g = 9.82
@@ -1573,7 +1550,6 @@ function swingingatwood_rule(u, p, t)
         du2 = pth/(m1*r^2)
         du3 = pth^2/(m1*r^3) - m2*g + m1*g*cos(th)
         du4 = -m1*g*r*sin(th)
-    end
     return SVector{4}(du1, du2, du3, du4)
 end
 
@@ -1602,23 +1578,17 @@ A nonlinear oscillator [^GuckenheimerHolmes1983].
     Vol. 42. Springer Science & Business Media.
 """
 function guckenheimer_holmes(u0=[-0.55582369,0.05181624,0.37766104];
-    a = 0.4,
-    b = 20.25,
-    c = 3,
-    d = 1.6,
-    e = 1.7,
-    f = 0.44)
+    a = 0.4, b = 20.25, c = 3, d = 1.6, e = 1.7, f = 0.44)
     return CDS(guckenheimerholmes_rule, u0, [a,b,c,d,e,f])
 end
 
-function guckenheimerholmes_rule(u, p, t)
-    @inbounds begin
+@inbounds function guckenheimerholmes_rule(u, p, t)
+
         a,b,c,d,e,f = p
         x,y,z = u
         du1 = a*x - b*y + c*z*x + d*z*(x^2 + y^2)
         du2 = a*y + b*x + c*z*y
         du3 = e - z^2 - f*(x^2 + y^2) - a*z^3
-    end
     return SVector{3}(du1, du2, du3)
 end
 
@@ -1643,14 +1613,13 @@ function halvorsen(u0=[-8.6807408,-2.4741399,0.070775762]; a = 1.4, b = 4.0)
     return CDS(halvorsen_rule, u0, [a, b])
 end
 
-function halvorsen_rule(u, p, t)
-    @inbounds begin
+@inbounds function halvorsen_rule(u, p, t)
+
         x, y, z = u
         a, b = p
         du1 = -a*x - b*(y + z) - y^2
         du2 = -a*y - b*(z + x) - z^2
         du3 = -a*z - b*(x + y) - x^2
-    end
     return SVector{3}(du1, du2, du3)
 end
 
