@@ -1755,3 +1755,87 @@ function CompetitionDynamicsParameters(option = 1)
     Rcoups = zeros(Float64, 3)
     return CompetitionDynamicsParameters(rs, ms, Ss, μs, Rcoups, Ks, cs, D)
 end
+
+"""
+```julia
+hyper_roessler(u0 = [-10.0, -6.0, 0.0, 10.0];
+    a = 0.25,
+    b = 3.0,
+    c = 0.5,
+    d = 0.05)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= -y - z\\\\
+\\dot{y} &= x + a*y + w\\\\
+\\dot{z} &= b + x*z\\\\
+\\dot{w} &= -c*z + d*w
+\\end{aligned}
+```
+An extension of the Rössler system showchasing hyperchaos[^Rossler1979].
+An hyperchaotic system is characterized by two positive Lyapunov exponents.
+
+[^Rossler1979]:
+    Rossler, O. (1979). An equation for hyperchaos.
+    Physics Letters A, 71(2-3), 155-157.
+"""
+function hyper_roessler(u0 = [-10.0, -6.0, 0.0, 10.0];
+    a = 0.25,
+    b = 3.0,
+    c = 0.5,
+    d = 0.05)
+    return CDS(hyper_roessler_rule, u0, [a, b, c, d])
+end
+
+function hyper_roessler_rule(u, p, t)
+    @inbounds begin
+        x, y, z, w = u
+        a, b, c, d = p
+        du1 = -y -z
+        du2 = x + a*y + w
+        du3 = b + x*z
+        du4 = -c*z + d*w
+    end
+    return SVector{4}(du1, du2, du3, du4)
+end
+
+"""
+```julia
+function hyper_lorenz(u0 = [-10.0, -6.0, 0.0, 10.0];
+    a = 10.0,
+    b = 28.0,
+    c = 8/3,
+    d = -1.0)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a*(y - x) + w\\\\
+\\dot{y} &= x*(b - z) - y\\\\
+\\dot{z} &= x*y - c*z\\\\
+\\dot{w} &= d*w -y*z
+\\end{aligned}
+```
+An extension of the Lorenz system showchasing hyperchaos.
+An hyperchaotic system is characterized by two positive Lyapunov exponents.
+
+## TODO add citation
+"""
+function hyper_lorenz(u0 = [-10.0, -6.0, 0.0, 10.0];
+    a = 10.0,
+    b = 28.0,
+    c = 8/3,
+    d = -1.0)
+    return CDS(hyper_lorenz_rule, u0, [a, b, c, d])
+end
+
+function hyper_lorenz_rule(u, p, t)
+    @inbounds begin
+        x, y, z, w = u
+        a, b, c, d = p
+        du1 = a*(y - x) + w
+        du2 = x*(b - z) - y
+        du3 = x*y - c*z
+        du4 = d*w -y*z
+    end
+    return SVector{4}(du1, du2, du3, du4)
+end
