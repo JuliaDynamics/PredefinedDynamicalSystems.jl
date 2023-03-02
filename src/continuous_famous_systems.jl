@@ -1815,10 +1815,12 @@ function hyper_lorenz(u0 = [-10.0, -6.0, 0.0, 10.0];
 \\dot{w} &= d*w -y*z
 \\end{aligned}
 ```
-An extension of the Lorenz system showchasing hyperchaos.
+An extension of the Lorenz system showchasing hyperchaos[^Wang2008].
 An hyperchaotic system is characterized by two positive Lyapunov exponents.
 
-## TODO add citation
+[^Wang2008]:
+    Wang, X., & Wang, M. (2008). A hyperchaos generated from Lorenz system.
+    Physica A: Statistical Mechanics and its Applications, 387(14), 3751-3758.
 """
 function hyper_lorenz(u0 = [-10.0, -6.0, 0.0, 10.0];
     a = 10.0,
