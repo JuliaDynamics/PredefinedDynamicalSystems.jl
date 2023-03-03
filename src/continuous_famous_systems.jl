@@ -1784,7 +1784,7 @@ function hyper_roessler(u0 = [-10.0, -6.0, 0.0, 10.0];
     b = 3.0,
     c = 0.5,
     d = 0.05)
-    return CDS(hyper_roessler_rule, u0, [a, b, c, d])
+    return CoupledODEs(hyper_roessler_rule, u0, [a, b, c, d])
 end
 
 function hyper_roessler_rule(u, p, t)
@@ -1827,7 +1827,7 @@ function hyper_lorenz(u0 = [-10.0, -6.0, 0.0, 10.0];
     b = 28.0,
     c = 8/3,
     d = -1.0)
-    return CDS(hyper_lorenz_rule, u0, [a, b, c, d])
+    return CoupledODEs(hyper_lorenz_rule, u0, [a, b, c, d])
 end
 
 function hyper_lorenz_rule(u, p, t)
