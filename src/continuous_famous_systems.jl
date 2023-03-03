@@ -25,7 +25,7 @@ function's documentation string.
 [^Lorenz1963]: E. N. Lorenz, J. atmos. Sci. **20**, pp 130 (1963)
 """
 function lorenz(u0=[0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3)
-    return CDS(lorenz_rule, u0, [σ, ρ, β])
+    return CoupledODEs(lorenz_rule, u0, [σ, ρ, β])
 end
 const lorenz63 = lorenz
 function lorenz_rule(u, p, t)
@@ -82,7 +82,7 @@ function's documentation string.
 
 """
 function chua(u0 = [0.7, 0.0, 0.0]; a = 15.6, b = 25.58, m0 = -8/7, m1 = -5/7)
-    return CDS(chua_rule, u0, [a, b, m0, m1], chua_jacob)
+    return CoupledODEs(chua_rule, u0, [a, b, m0, m1], chua_jacob)
 end
 function chua_rule(u, p, t)
     @inbounds begin
@@ -133,7 +133,7 @@ function's documentation string.
 [^Rössler1976]: O. E. Rössler, Phys. Lett. **57A**, pp 397 (1976)
 """
 function roessler(u0=[1, -2, 0.1]; a = 0.2, b = 0.2, c = 5.7)
-    return CDS(roessler_rule, u0, [a, b, c], roessler_jacob)
+    return CoupledODEs(roessler_rule, u0, [a, b, c], roessler_jacob)
 end
 function roessler_rule(u, p, t)
     @inbounds begin
@@ -181,7 +181,7 @@ function's documentation string.
 """
 function double_pendulum(u0=[π/2, 0, 0, 0.5];
     G=10.0, L1 = 1.0, L2 = 1.0, M1 = 1.0, M2 = 1.0)
-    return CDS(doublependulum_rule, u0, [G, L1, L2, M1, M2])
+    return CoupledODEs(doublependulum_rule, u0, [G, L1, L2, M1, M2])
 end
 @inbounds function doublependulum_rule(u, p, t)
     G, L1, L2, M1, M2 = p
@@ -231,7 +231,7 @@ The function `Systems.henonheiles_ics(E, n)` generates a grid of
 [^HénonHeiles1964]: Hénon, M. & Heiles, C., The Astronomical Journal **69**, pp 73–79 (1964)
 """
 function henonheiles(u0=[0, -0.25, 0.42081, 0])
-    return CDS(henonheiles_rule, u0, nothing)
+    return CoupledODEs(henonheiles_rule, u0, nothing)
 end
 @inbounds function henonheiles_rule(u, p, t)
     du1 = u[3]
@@ -299,7 +299,7 @@ The default initial condition is chaotic.
     **70**, pp 105 (2018)
 """
 function qbh(u0=[0., -2.5830294658973876, 1.3873470962626937, -4.743416490252585];  A=1., B=0.55, D=0.4)
-    return CDS(qrule, u0, [A, B, D])
+    return CoupledODEs(qrule, u0, [A, B, D])
 end
 function qrule(z, p, t)
     @inbounds begin
@@ -329,7 +329,7 @@ end
 function lorenz96(N::Int, u0 = range(0; length = N, step = 0.1); F=0.01)
     @assert N ≥ 4 "`N` must be at least 4"
     lor96 = Lorenz96{N}() # create struct
-    return CDS(lor96, u0, [F])
+    return CoupledODEs(lor96, u0, [F])
 end
 struct Lorenz96{N} end # Structure for size type
 function (obj::Lorenz96{N})(dx, x, p, t) where {N}
@@ -361,7 +361,7 @@ function's documentation string.
 function duffing(u0 = [0.1, 0.25]; ω = 2.2, f = 27.0, d = 0.2, β = 1)
     J = zeros(eltype(u0), 2, 2)
     J[1,2] = 1
-    return CDS(duffing_rule, u0, [ω, f, d, β])
+    return CoupledODEs(duffing_rule, u0, [ω, f, d, β])
 end
 @inbounds function duffing_rule(x, p, t)
     ω, f, d, β = p
@@ -382,7 +382,7 @@ Shinriki oscillator with all other parameters (besides `R1`) set to constants.
 function shinriki(u0 = [-2, 0, 0.2]; R1 = 22.0)
     # # Jacobian caller for Shinriki:
     # shinriki_rule(::Type{Val{:jac}}, J, u, p, t) = (shi::Shinriki)(t, u, J)
-    return CDS(shinriki_rule, u0, [R1])
+    return CoupledODEs(shinriki_rule, u0, [R1])
 end
 shinriki_voltage(V) = 2.295e-5*(exp(3.0038*V) - exp(-3.0038*V))
 function shinriki_rule(u, p, t)
@@ -420,7 +420,7 @@ function's documentation string.
 [^Gissinger2012]: C. Gissinger, Eur. Phys. J. B **85**, 4, pp 1-12 (2012)
 """
 function gissinger(u0 = [3, 0.5, 1.5]; μ = 0.119, ν = 0.1, Γ = 0.9)
-    return CDS(gissinger_rule, u0, [μ, ν, Γ], gissinger_jacob)
+    return CoupledODEs(gissinger_rule, u0, [μ, ν, Γ], gissinger_jacob)
 end
 function gissinger_rule(u, p, t)
     μ, ν, Γ = p
@@ -453,7 +453,7 @@ reversal events by means of a double-disk dynamo system.
 [^Rikitake1958]: T. Rikitake Math. Proc. Camb. Phil. Soc. **54**, pp 89–105, (1958)
 """
 function rikitake(u0 = [1, 0, 0.6]; μ = 1.0, α = 1.0)
-    return CDS(rikitake_rule, u0, [μ, α], rikitake_jacob)
+    return CoupledODEs(rikitake_rule, u0, [μ, α], rikitake_jacob)
 end
 function rikitake_rule(u, p, t)
     μ, α = p
@@ -500,7 +500,7 @@ See Chapter 4 of "Elegant Chaos" by J. C. Sprott. [^Sprott2010]
     Sprott, J. C. (2010). *Elegant chaos: algebraically simple chaotic flows*.
     World Scientific.
 """
-nosehoover(u0 = [0, 0.1, 0]) = CDS(nosehoover_rule, u0, nothing, nosehoover_jacob)
+nosehoover(u0 = [0, 0.1, 0]) = CoupledODEs(nosehoover_rule, u0, nothing, nosehoover_jacob)
 function nosehoover_rule(u, p, t)
     x,y,z = u
     xdot = y
@@ -549,7 +549,7 @@ diameter is 1.
 """
 function antidots(u0 = [0.5, 0.5, 0.25, 0.25];
     d0 = 0.5, c = 0.2, B = 1.0)
-    return CDS(antidot_rule, u0, [B, d0, c], antidot_jacob)
+    return CoupledODEs(antidot_rule, u0, [B, d0, c], antidot_jacob)
 end
 
 function antidot_rule(u, p, t)
@@ -640,7 +640,7 @@ J. C. Sprott. [^Sprott2010]
     World Scientific.
 """
 function ueda(u0 = [3.0, 0]; k = 0.1, B = 12.0)
-    return CDS(ueda_rule, u0, [k, B], ueda_jacob)
+    return CoupledODEs(ueda_rule, u0, [k, B], ueda_jacob)
 end
 function ueda_rule(u, p, t)
     x,y = u
@@ -1010,7 +1010,7 @@ In the original paper there were no parameters, which are added here for explora
 [^Sprott2014b]: J. C. Sprott. Physics Letters A, 378
 """
 function sprott_dissipative_conservative(u0 = [1.0, 0, 0]; a = 2, b = 1, c = 1)
-    return CDS(
+    return CoupledODEs(
         sprott_dissipative_conservative_f, u0, [a, b, c], sprott_dissipative_conservative_J
     )
 end
@@ -1074,7 +1074,7 @@ bifurcation, which occurs close to `I = 9.5`.
 function hodgkinhuxley(u0=[-60.0, 0.0, 0.0, 0.0];
     I = 12.0, Vna = 50.0, Vk = -77.0, Vl = -54.4, gna = 120.0,gk = 36.0, gl = 0.3)
 #In Ermentrout's & Abbott's books
-    return CDS(hodgkinhuxley_rule, u0, [I, Vna, Vk, Vl, gna, gk, gl])
+    return CoupledODEs(hodgkinhuxley_rule, u0, [I, Vna, Vk, Vl, gna, gk, gl])
 end
 function hodgkinhuxley_rule(u, p, t)
     @inbounds begin
@@ -1133,7 +1133,7 @@ oscillations. Setting `\\mu=8.53` generates chaotic oscillations.
     The London, Edinburgh and Dublin Phil. Mag. & J. of Sci., 2(7), 978–992.
 """
 function vanderpol(u0=[0.5, 0.0]; μ=1.5, F=1.2, T=10)
-    return CDS(vanderpol_rule, u0, [μ, F, T], vanderpol_jac)
+    return CoupledODEs(vanderpol_rule, u0, [μ, F, T], vanderpol_jac)
 end
 function vanderpol_rule(u, p, t)
     @inbounds begin
@@ -1181,7 +1181,7 @@ oscillations.
     https://mathworld.wolfram.com/Lotka-VolterraEquations.html
 """
 function lotkavolterra(u0=[10.0, 5.0]; α = 1.5, β = 1, δ=1, γ=3)
-    return CDS(lotkavolterra_rule, u0, [α, β, δ, γ], lotkavolterra_jac)
+    return CoupledODEs(lotkavolterra_rule, u0, [α, β, δ, γ], lotkavolterra_jac)
 end
 function lotkavolterra_rule(u, p, t)
     @inbounds begin
@@ -1227,7 +1227,7 @@ periodic bursting.
     Proc. R. Soc. Lond. B 221, 87-102.
 """
 function hindmarshrose(u0=[-1.0, 0.0, 0.0]; a=1, b=3, c=1, d=5, r=0.001, s=4, xr=-8/5, I=2.0)
-    return CDS(hindmarshrose_rule, u0, [a,b,c,d,r,s,xr, I], hindmarshrose_jac)
+    return CoupledODEs(hindmarshrose_rule, u0, [a,b,c,d,r,s,xr, I], hindmarshrose_jac)
 end
 function hindmarshrose_rule(u, p, t)
     @inbounds begin
@@ -1271,7 +1271,7 @@ coupled bursting neurons", DOI:https://doi.org/10.1103/PhysRevE.97.062311.
 function hindmarshrose_two_coupled(u0=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
 			a = 1.0, b = 3.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
 			k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
-	return CDS(hindmarshrose_coupled_rule, u0, [a, b, c, d, r, s, xr, I, k1, k2, k_el, xv])
+	return CoupledODEs(hindmarshrose_coupled_rule, u0, [a, b, c, d, r, s, xr, I, k1, k2, k_el, xv])
 end
 function hindmarshrose_coupled_rule(u, p, t)
     function sigma(x)
@@ -1330,7 +1330,7 @@ radius `\\sqrt(\\mu)`.
     Boulder, CO :Westview Press, a member of the Perseus Books Group (2015).
 """
 function stuartlandau_oscillator(u0=[1.0, 0.0]; μ=1.0, ω=1.0, b=1)
-    return CDS(stuartlandau_rule, u0, [μ, ω, b], stuartlandau_jac)
+    return CoupledODEs(stuartlandau_rule, u0, [μ, ω, b], stuartlandau_jac)
 end
 function stuartlandau_rule(u, p, t)
     @inbounds begin
@@ -1362,7 +1362,7 @@ The parameter container has the parameters in the same order as stated in this
 function's documentation string.
 """
 function forced_pendulum(u0 = [0.1, 0.25]; ω = 2.2, f = 27.0, d = 0.2)
-    return CDS(forced_pendulum_rule, u0, [ω, f, d])
+    return CoupledODEs(forced_pendulum_rule, u0, [ω, f, d])
 end
 @inbounds function forced_pendulum_rule(u, p, t)
     ω = p[1]; F = p[2]; d = p[3]
@@ -1392,7 +1392,7 @@ of an attractor A there is a point of the basin of attraction of another attract
 function riddled_basins(u0=[0.5, 0.6, 0, 0];
         γ=0.05, x̄ = 1.9, f₀=2.3, ω =3.5, x₀=1.0, y₀=0.0
     )
-    return CDS(riddled_basins_rule, u0, [γ, x̄, f₀, ω, x₀, y₀])
+    return CoupledODEs(riddled_basins_rule, u0, [γ, x̄, f₀, ω, x₀, y₀])
 end
 function riddled_basins_rule(u, p, t)
     @inbounds begin
@@ -1443,7 +1443,7 @@ function morris_lecar(u0=[0.1, 0.1];
     I = 0.15, V3 = 0.1, V1 = -0.00, V2 = 0.15, V4 = 0.1,
     VCa = 1 ,  VL = -0.5, VK = -0.7, gCa = 1.2, gK = 2,
     gL = 0.5, τ = 3)
-    return CDS(morris_lecar_rule, u0, [I, V3, V1, V2, V4, VCa, VL, VK, gCa, gK, gL, τ])
+    return CoupledODEs(morris_lecar_rule, u0, [I, V3, V1, V2, V4, VCa, VL, VK, gCa, gK, gL, τ])
 end
 
 @inbounds function morris_lecar_rule(u, p, t)
@@ -1483,7 +1483,7 @@ function sakarya(u0= [-2.8976045, 3.8877978, 3.07465];
     b = 1,
     m = 1
 )
-    return CDS(sakarya_rule, u0, [a,b,m])
+    return CoupledODEs(sakarya_rule, u0, [a,b,m])
 end
 
 function sakarya_rule(u, p, t)
@@ -1526,7 +1526,7 @@ function lorenz_bounded(u0=[-13.284881, -12.444334, 34.188198];
     rho = 28.0,
     sigma = 10.0
 )
-    return CDS(lorenzbounded_rule, u0, [beta,r,rho,sigma])
+    return CoupledODEs(lorenzbounded_rule, u0, [beta,r,rho,sigma])
 end
 
 function lorenzbounded_rule(u, p, t)
@@ -1561,7 +1561,7 @@ momenta [^Tufillaro1984].
     Swinging Atwood's Machine. American Journal of Physics. 52 (10): 895--903.
 """
 function swinging_atwood(u0=[0.113296,1.5707963267948966,0.10992,0.17747]; m1=1.0, m2=4.5)
-    return CDS(swingingatwood_rule, u0, [m1, m2])
+    return CoupledODEs(swingingatwood_rule, u0, [m1, m2])
 end
 
 function swingingatwood_rule(u, p, t)
@@ -1608,7 +1608,7 @@ function guckenheimer_holmes(u0=[-0.55582369,0.05181624,0.37766104];
     d = 1.6,
     e = 1.7,
     f = 0.44)
-    return CDS(guckenheimerholmes_rule, u0, [a,b,c,d,e,f])
+    return CoupledODEs(guckenheimerholmes_rule, u0, [a,b,c,d,e,f])
 end
 
 function guckenheimerholmes_rule(u, p, t)
@@ -1640,7 +1640,7 @@ An algebraically-simple chaotic system with quadratic nonlinearity [^Sprott2010]
     World Scientific, 2010.
 """
 function halvorsen(u0=[-8.6807408,-2.4741399,0.070775762]; a = 1.4, b = 4.0)
-    return CDS(halvorsen_rule, u0, [a, b])
+    return CoupledODEs(halvorsen_rule, u0, [a, b])
 end
 
 function halvorsen_rule(u, p, t)
