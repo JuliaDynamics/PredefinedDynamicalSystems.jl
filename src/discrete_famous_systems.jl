@@ -1,5 +1,3 @@
-const DDS = DynamicalSystemsBase.DiscreteDynamicalSystem
-
 """
 ```julia
 towel(u0 = [0.085, -0.121, 0.075])
@@ -23,7 +21,7 @@ Default values are the ones used in the original paper.
 [1] : O. E. Rössler, Phys. Lett. **71A**, pp 155 (1979)
 """
 function towel(u0=[0.085, -0.121, 0.075])
-    return DDS(towel_rule, u0, nothing)
+    return DeterministicIteratedMap(towel_rule, u0, nothing)
 end# should result in lyapunovs: [0.432207,0.378834,-3.74638]
 function towel_rule(x, p, n)
     @inbounds x1, x2, x3 = x[1], x[2], x[3]
@@ -72,7 +70,7 @@ Nuclear Physics, Novosibirsk (1969)
 [2] : J. M. Greene, J. Math. Phys. **20**, pp 1183 (1979)
 """
 function standardmap(u0=[0.001245, 0.00875]; k = 0.971635)
-    return DDS(standardmap_rule, u0, [k])
+    return DeterministicIteratedMap(standardmap_rule, u0, [k])
 end
 @inbounds function standardmap_rule(x, par, n)
     theta = x[1]; p = x[2]
@@ -132,7 +130,7 @@ function coupledstandardmaps(M::Int, u0 = 0.001rand(2M);
     sparseJ = sparse(J)
     p = vcat(ks, Γ)
     csm(sparseJ, u0, p, 0)
-    return DDS(csm, u0, p, csm, sparseJ)
+    return DeterministicIteratedMap(csm, u0, p, csm, sparseJ)
 end
 struct CoupledStandardMaps{N}
     idxs::SVector{N, Int}
@@ -198,7 +196,7 @@ function's documentation string.
 [1] : M. Hénon, Commun.Math. Phys. **50**, pp 69 (1976)
 """
 function henon(u0=zeros(2); a = 1.4, b = 0.3)
-    return DDS(henon_rule, u0, [a,b])
+    return DeterministicIteratedMap(henon_rule, u0, [a,b])
 end # should give lyapunov exponents [0.4189, -1.6229]
 henon_rule(x, p, n) = SVector{2}(1.0 - p[1]*x[1]^2 + x[2], p[2]*x[1])
 henon_jacob(x, p, n) = SMatrix{2,2}(-2*p[1]*x[1], p[2], 1.0, 0.0)
@@ -226,7 +224,7 @@ function's documentation string.
 [2] : M. J. Feigenbaum, J. Stat. Phys. **19**, pp 25 (1978)
 """
 function logistic(x0=0.4; r = 4.0)
-    return DDS(logistic_rule, SVector(x0), [r])
+    return DeterministicIteratedMap(logistic_rule, SVector(x0), [r])
 end
 logistic_rule(x, p, n) = @inbounds SVector(p[1]*x[1]*(1 - x[1]))
 logistic_jacob(x, p, n) = @inbounds SMatrix{1,1}(p[1]*(1 - 2x[1]))
@@ -252,7 +250,7 @@ x_n(1 + |2x_n|^{z-1}), & \\quad |x_n| \\le 0.5 \\\\
 [2] : Meyer et al., New. J. Phys **20** (2019)
 """
 function pomeau_manneville(u0 = 0.2, z = 2.5)
-    return DDS(pm_rule, u0, [z], pm_jac)
+    return DeterministicIteratedMap(pm_rule, u0, [z], pm_jac)
 end
 function pm_rule(x, p, n)
     if x < -0.5
@@ -290,7 +288,7 @@ function's documentation string.
 [^Manneville1980]: Manneville, P. (1980). Intermittency, self-similarity and 1/f spectrum in dissipative dynamical systems. [Journal de Physique, 41(11), 1235–1243](https://doi.org/10.1051/jphys:0198000410110123500)
 """
 function manneville_simple(x0=0.4; ε = 0.1)
-    return DDS(manneville_f, x0, [ε], manneville_j)
+    return DeterministicIteratedMap(manneville_f, x0, [ε], manneville_j)
 end
 
 function manneville_f(x, p, t)
@@ -313,7 +311,7 @@ Vladimir Arnold in the 1960s. [1]
 [1] : Arnol'd, V. I., & Avez, A. (1968). Ergodic problems of classical mechanics.
 """
 function arnoldcat(u0 = [0.001245, 0.00875])
-    return DDS(arnoldcat_rule, u0, nothing, arnoldcat_jacob)
+    return DeterministicIteratedMap(arnoldcat_rule, u0, nothing, arnoldcat_jacob)
 end # Should give Lyapunov exponents [2.61803, 0.381966]
 function arnoldcat_rule(u, p, n)
     x,y = u
@@ -345,7 +343,7 @@ This map illustrate the fractalization of the basins boundary and its uncertaint
     An obstruction to predictability, Physics Letters A, 99, 9, 1983
 """
 function grebogi_map(u0 = [0.2, 0.]; a = 1.32, b=0.9, J₀=0.3)
-    return DDS(grebogi_map_rule, u0, [a,b,J₀], grebogi_map_J)
+    return DeterministicIteratedMap(grebogi_map_rule, u0, [a,b,J₀], grebogi_map_J)
 end
 function grebogi_map_rule(u, p, n)
     θ = u[1]; x = u[2]
@@ -375,7 +373,7 @@ u_i' = \\lambda - u_i^2 + k \\sum_{j\\ne i} (u_j^2 - u_i^2)
 Here the prime ``'`` denotes next state.
 """
 function nld_coupled_logistic_maps(D = 4, u0 = range(0, 1; length=D); λ = 1.2, k = 0.08)
-    return DDS(nld_coupled_logistic_maps_f, u0, [λ, k])
+    return DeterministicIteratedMap(nld_coupled_logistic_maps_f, u0, [λ, k])
 end
 
 function nld_coupled_logistic_maps_f(du, u, p, n)
@@ -409,7 +407,7 @@ The parameter μ should be kept in the interval `[0,2]`. At μ=2, the tent map c
 [^Ott2002] : E. Ott, "Chaos in Dynamical Systems" (2nd ed.) Cambridge: Cambridge University Press (2010).
 """
 function tentmap(u0 = 0.25, μ = 2.0)
-    return DDS(tentmap_rule, u0, [μ], tentmap_jac)
+    return DeterministicIteratedMap(tentmap_rule, u0, [μ], tentmap_jac)
 end
 function tentmap_rule(x, p, n)
     μ = p[1]
@@ -442,7 +440,7 @@ The parameter β controls the dynamics of the map. Its Lyapunov exponent can be 
 At β=2, it becomes the dyadic transformation, also known as the bit shift map, the 2x mod 1 map, the Bernoulli map or the sawtooth map. The typical trajectory for this case is chaotic, though there are countably infinite periodic orbits [^Ott2002].
 """
 function betatransformationmap(u0 = 0.25; β=2.0)
-    return DDS(betatransformation_rule, u0, [β], betatransformation_jac)
+    return DeterministicIteratedMap(betatransformation_rule, u0, [β], betatransformation_jac)
 end
 function betatransformation_rule(x, p, n)
     @inbounds β = p[1]
@@ -478,7 +476,7 @@ The parameters σ and β  are generally kept at `0.001`, while α is chosen to g
 [^Cao2013] : H. Cao and Y Wu, "Bursting types and stable domains of Rulkov neuron network with mean field coupling", International Journal of Bifurcation and Chaos,23:1330041 (2013).
 """
 function rulkovmap(u0=[1.0, 1.0]; α=4.1, β=0.001, σ=0.001)
-    return DDS(rulkovmap_rule, u0, [α, β, σ], rulkovmap_jac)
+    return DeterministicIteratedMap(rulkovmap_rule, u0, [α, β, σ], rulkovmap_jac)
 end
 @inbounds function rulkovmap_rule(x, p, n)
     α, β, σ = p
@@ -509,7 +507,7 @@ The default parameters are chosen to give a unique chaotic attractor. A double a
 [^Skiadas2008] : "Chaotic Modelling and Simulation: Analysis of Chaotic Models, Attractors and Forms", CRC Press (2008).
 """
 function ikedamap(u0=[1.0, 1.0]; a=1.0, b=1.0, c=0.4, d =6.0)
-    return DDS(ikedamap_rule, u0, [a,b,c,d], ikedamap_jac)
+    return DeterministicIteratedMap(ikedamap_rule, u0, [a,b,c,d], ikedamap_jac)
 end
 @inbounds function ikedamap_rule(u, p, n)
     a,b,c,d  = p
