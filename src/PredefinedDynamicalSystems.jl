@@ -14,9 +14,7 @@ using Reexport
 
 using StaticArrays
 
-const DDS = DeterministicIteratedMap
 include("discrete_famous_systems.jl")
-
 include("continuous_famous_systems.jl")
 
 end
