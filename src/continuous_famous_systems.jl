@@ -700,7 +700,7 @@ function magnetic_pendulum(u = [sincos(0.12553*2π)..., 0, 0];
     γ = 1.0, d = 0.3, α = 0.2, ω = 0.5, N = 3, γs = fill(γ, N))
     m = MagneticPendulum([SVector(cos(2π*i/N), sin(2π*i/N)) for i in 1:N])
     p = MagneticPendulumParams(γs, d, α, ω)
-    return ContinuousDynamicalSystem(m, u, p)
+    return CoupledODEs(m, u, p)
 end
 
 """
@@ -716,7 +716,7 @@ Famous excitable system which emulates the firing of a neuron, with rule
 More details in the [Scholarpedia](http://www.scholarpedia.org/article/FitzHugh-Nagumo_model) entry.
 """
 function fitzhugh_nagumo(u = 0.5ones(2); a=3.0, b=0.2, ε=0.01, I=0.0)
-    ds = ContinuousDynamicalSystem(fitzhugh_nagumo_rule, u, [a, b, ε, I])
+    ds = CoupledODEs(fitzhugh_nagumo_rule, u, [a, b, ε, I])
 end
 function fitzhugh_nagumo_rule(x, p, t)
     u, w = x
@@ -741,7 +741,7 @@ It is noteworthy because its strange attractor is multifractal with fractal dime
     Chaos Theory and Applications 2(2),1-3, 2020
 """
 more_chaos_example(u = [0.0246, 0.79752, 0.3535866]) =
-ContinuousDynamicalSystem(more_chaos_rule, u, nothing)
+CoupledODEs(more_chaos_rule, u, nothing)
 function more_chaos_rule(u, p, t)
     x, y, z = u
     dx = y
@@ -772,8 +772,8 @@ See discussion in Section 4.4.3 of "Elegant Chaos" by J. C. Sprott.
     Thomas, R. (1999). *International Journal of Bifurcation and Chaos*,
     *9*(10), 1889-1905.
 """
-thomas_cyclical(u0 = [1.0, 0, 0]; b = 0.2) = ContinuousDynamicalSystem(thomas_rule, u0, [b])
-labyrinth(u0 = [1.0, 0, 0]) = ContinuousDynamicalSystem(thomas_rule, u0, [0.0])
+thomas_cyclical(u0 = [1.0, 0, 0]; b = 0.2) = CoupledODEs(thomas_rule, u0, [b])
+labyrinth(u0 = [1.0, 0, 0]) = CoupledODEs(thomas_rule, u0, [0.0])
 
 function thomas_rule(u, p, t)
     x,y,z = u
@@ -805,7 +805,7 @@ between the boxes (polar and equatorial ocean basins) and ``\\eta_i`` are parame
     Stommel, Thermohaline convection with two stable regimes of flow. Tellus, 13(2)
 """
 function stommel_thermohaline(u = [0.3, 0.2]; η1 = 3.0, η2 = 1, η3 = 0.3)
-    ds = ContinuousDynamicalSystem(stommel_thermohaline_rule, u, [η1, η2, η3],
+    ds = CoupledODEs(stommel_thermohaline_rule, u, [η1, η2, η3],
     stommel_thermohaline_jacob)
 end
 function stommel_thermohaline_rule(x, p, t)
@@ -854,7 +854,7 @@ bsn, att = basins_of_attraction((xg, yg, zg), ds; mx_chk_att=4)
     Lorenz-84 low-order atmospheric circulation model, Chaos 18, 033121 (2008)
 """
 function lorenz84(u = [0.1, 0.1, 0.1]; F=6.846, G=1.287, a=0.25, b=4.0)
-    return ContinuousDynamicalSystem(lorenz84_rule, u, [F, G, a, b])
+    return CoupledODEs(lorenz84_rule, u, [F, G, a, b])
 end
 @inline @inbounds function lorenz84_rule(u, p, t)
     F, G, a, b = p
@@ -901,7 +901,7 @@ bsn, att = basins_of_attraction((xg, yg), pmap)
     Int. Jour. Bifurcation and Chaos 24, 1450009 (2014)
 """
 function lorenzdl(u = [0.1, 0.1, 0.1]; R=4.7)
-    return ContinuousDynamicalSystem(lorenzdl_rule, u, R,
+    return CoupledODEs(lorenzdl_rule, u, R,
     lorenzdl_rule_jacob)
 end
 @inline @inbounds function lorenzdl_rule(u, p, t)
@@ -941,7 +941,7 @@ The equations are:
 function coupled_roessler(u0=[1, -2, 0, 0.11, 0.2, 0.1];
     ω1 = 0.18, ω2 = 0.22, a = 0.2, b = 0.2, c = 5.7, k1 = 0.115, k2 = 0.0)
     p = [ω1, ω2, a, b, c, k1, k2]
-    return ContinuousDynamicalSystem(coupled_roessler_f, u0, p)
+    return CoupledODEs(coupled_roessler_f, u0, p)
 end
 function coupled_roessler_f(u,p,t)
     ω1, ω2, a, b, c, k1, k2 = p
@@ -973,7 +973,7 @@ function kuramoto(D = 25, u0 = range(0, 2π; length = D);
     K = 0.3, ω = range(-1, 1; length = D))
     p = KuramotoParams(K, ω)
     @warn "The kuramoto implementation does NOT have a Jacobian function!"
-    return ContinuousDynamicalSystem(kuramoto_f, u0, p, (J,z0, p, n) -> nothing)
+    return CoupledODEs(kuramoto_f, u0, p)
 end
 using Statistics: mean
 function kuramoto_f(du, u, p, t)
@@ -1671,7 +1671,7 @@ function multispecies_competition(option = 1)
     p = CompetitionDynamicsParameters(option)
     N = size(p.Ks, 2)
     u0 = [[0.1 for i=1:N]; [S for S in p.Ss]]
-    ds = ContinuousDynamicalSystem(multispecies_competition_rule!, u0, p, (J, x, p, t) -> nothing)
+    ds = CoupledODEs(multispecies_competition_rule!, u0, p)
     return ds
 end
 
