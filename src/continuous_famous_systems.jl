@@ -1841,3 +1841,95 @@ function hyper_lorenz_rule(u, p, t)
     end
     return SVector{4}(du1, du2, du3, du4)
 end
+
+"""
+```julia
+function hyper_qi(u0 = [10.0, 15.0, 20.0, 22.0];
+    a = 50.0,
+    b = 24.0,
+    c = 13,
+    d = 8,
+    e = 33,
+    f = 30)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a*(y - x) + y*z\\\\
+\\dot{y} &= b*(x + y) - xz\\\\
+\\dot{z} &= - c*z - e*w + x*y\\\\
+\\dot{w} &= -d*w + f*z +x*y
+\\end{aligned}
+```
+A hyperchaotic dynamical systems, showcasing a wide range of different behaviors,
+including rich bifurcations in different directions[^Qi2008].
+
+[^Qi2008]:
+    Qi, G., van Wyk, M. A., van Wyk, B. J., & Chen, G. (2008).
+    On a new hyperchaotic system.
+    Physics Letters A, 372(2), 124-136.
+"""
+function hyper_qi(u0 = [10.0, 15.0, 20.0, 22.0];
+    a = 50.0,
+    b = 24.0,
+    c = 13,
+    d = 8,
+    e = 33,
+    f = 30)
+    return CoupledODEs(hyper_qi_rule, u0, [a, b, c, d, e, f])
+end
+
+function hyper_qi_rule(u, p, t)
+    @inbounds begin
+        x, y, z, w = u
+        a, b, c, d, e, f = p
+        du1 = a*(y - x) + y*z
+        du2 = b*(x + y) - x*z
+        du3 = - c*z - e*w + x*y
+        du4 = -d*w + f*z +x*y
+    end
+    return SVector{4}(du1, du2, du3, du4)
+end
+
+"""
+```julia
+function hyper_jha(u0 = [0.1, 0.1, 0.1, 0.1];
+    a = 10.0,
+    b = 28.0,
+    c = 8/3,
+    d = 1.3)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a*(y - x) + w\\\\
+\\dot{y} &= x*(b - z) - y\\\\
+\\dot{z} &= x*y - c*z\\\\
+\\dot{w} &= d*w -x*z
+\\end{aligned}
+```
+An extension of the Lorenz system showchasing hyperchaos[^Hussain2015].
+
+[^Hussain2015]:
+    Hussain, I., Gondal, M. A., & Hussain, A. (2015).
+    Construction of dynamical non-linear components based on lorenz system and
+    symmetric group of permutations.
+    3D Research, 6, 1-6.
+"""
+function hyper_jha(u0 = [0.1, 0.1, 0.1, 0.1];
+    a = 10.0,
+    b = 28.0,
+    c = 8/3,
+    d = 1.3)
+    return CoupledODEs(hyper_jha_rule, u0, [a, b, c, d])
+end
+
+function hyper_jha_rule(u, p, t)
+    @inbounds begin
+        x, y, z, w = u
+        a, b, c, d = p
+        du1 = a*(y - x) + w
+        du2 = x*(b - z) - y
+        du3 = x*y - c*z
+        du4 = d*w -x*z
+    end
+    return SVector{4}(du1, du2, du3, du4)
+end
