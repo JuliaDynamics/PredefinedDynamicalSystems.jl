@@ -1860,7 +1860,7 @@ function hyper_qi(u0 = [10.0, 15.0, 20.0, 22.0];
 \\dot{w} &= -d*w + f*z +x*y
 \\end{aligned}
 ```
-An hyperchaotic dynamical systems, showcasing a wide range of different behaviors,
+A hyperchaotic dynamical systems, showcasing a wide range of different behaviors,
 including rich bifurcations in different directions[^Qi2008].
 
 [^Qi2008]:
