@@ -84,20 +84,16 @@ function's documentation string.
 function chua(u0 = [0.7, 0.0, 0.0]; a = 15.6, b = 25.58, m0 = -8/7, m1 = -5/7)
     return CoupledODEs(chua_rule, u0, [a, b, m0, m1], chua_jacob)
 end
-function chua_rule(u, p, t)
-    @inbounds begin
-    a, b, m0, m1 = p
-    du1 = a * (u[2] - u[1] - chua_element(u[1], m0, m1))
+@inbounds function chua_rule(u, p, t)
+    du1 = p[1] * (u[2] - u[1] - chua_element(u[1], p[3], p[4]))
     du2 = u[1] - u[2] + u[3]
-    du3 = -b * u[2]
+    du3 = -p[2] * u[2]
     return SVector{3}(du1, du2, du3)
-    end
 end
 function chua_jacob(u, p, t)
-    a, b, m0, m1 = p
-    return @SMatrix[-a*(1 + chua_element_derivative(u[1], m0, m1)) a 0;
-                    1 -1 1;
-                    0 -b 0]
+    return SMatrix{3,3}(-p[1]*(1 + chua_element_derivative(u[1], p[3], p[4])), p[1], 0.0,
+                    1.0, -1.0, 1.0,
+                    0.0, -p[2], 0.0)
 end
 # Helper functions for Chua's circuit.
 function chua_element(x, m0, m1)
@@ -132,23 +128,19 @@ function's documentation string.
 
 [^Rössler1976]: O. E. Rössler, Phys. Lett. **57A**, pp 397 (1976)
 """
-function roessler(u0=[1, -2, 0.1]; a = 0.2, b = 0.2, c = 5.7)
+function roessler(u0=[1.0, -2.0, 0.1]; a = 0.2, b = 0.2, c = 5.7)
     return CoupledODEs(roessler_rule, u0, [a, b, c], roessler_jacob)
 end
-function roessler_rule(u, p, t)
-    @inbounds begin
-    a, b, c = p
+@inbounds function roessler_rule(u, p, t)
     du1 = -u[2]-u[3]
-    du2 = u[1] + a*u[2]
-    du3 = b + u[3]*(u[1] - c)
+    du2 = u[1] + p[1]*u[2]
+    du3 = p[2] + u[3]*(u[1] - p[3])
     return SVector{3}(du1, du2, du3)
-    end
 end
 function roessler_jacob(u, p, t)
-    a, b, c = p
-    return @SMatrix [0.0 (-1.0) (-1.0);
-                     1.0 a 0.0;
-                     u[3] 0.0 (u[1]-c)]
+    return SMatrix{3,3}(0.0, -1.0, -1.0,
+                     1.0, p[1], 0.0,
+                     u[3], 0.0, u[1]-p[3])
 end
 
 """
@@ -179,7 +171,7 @@ Jacobian is created automatically (thus methods that use the Jacobian will be sl
 The parameter container has the parameters in the same order as stated in this
 function's documentation string.
 """
-function double_pendulum(u0=[π/2, 0, 0, 0.5];
+function double_pendulum(u0=[π/2, 0.0, 0.0, 0.5];
     G=10.0, L1 = 1.0, L2 = 1.0, M1 = 1.0, M2 = 1.0)
     return CoupledODEs(doublependulum_rule, u0, [G, L1, L2, M1, M2])
 end
@@ -224,13 +216,13 @@ The function `Systems.henonheiles_ics(E, n)` generates a grid of
 
 [^HénonHeiles1964]: Hénon, M. & Heiles, C., The Astronomical Journal **69**, pp 73–79 (1964)
 """
-function henonheiles(u0=[0, -0.25, 0.42081, 0])
+function henonheiles(u0=[0.0, -0.25, 0.42081, 0.0])
     return CoupledODEs(henonheiles_rule, u0, nothing)
 end
 @inbounds function henonheiles_rule(u, p, t)
     du1 = u[3]
     du2 = u[4]
-    du3 = -u[1] - 2u[1]*u[2]
+    du3 = -u[1] - 2.0*u[1]*u[2]
     du4 = -u[2] - (u[1]^2 - u[2]^2)
     return SVector(du1, du2, du3, du4)
 end
