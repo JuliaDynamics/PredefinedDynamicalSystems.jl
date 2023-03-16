@@ -28,20 +28,14 @@ function lorenz(u0=[0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3)
     return CoupledODEs(lorenz_rule, u0, [σ, ρ, β])
 end
 const lorenz63 = lorenz
-function lorenz_rule(u, p, t)
-    @inbounds begin
-        σ = p[1]; ρ = p[2]; β = p[3]
-        du1 = σ*(u[2]-u[1])
-        du2 = u[1]*(ρ-u[3]) - u[2]
-        du3 = u[1]*u[2] - β*u[3]
-        return SVector{3}(du1, du2, du3)
-    end
+@inbounds function lorenz_rule(u, p, t)
+    du1 = p[1]*(u[2]-u[1])
+    du2 = u[1]*(ρ-u[3]) - u[2]
+    du3 = u[1]*u[2] - p[3]*u[3]
+    return SVector{3}(du1, du2, du3)
 end
-function lorenz_jacob(u, p, t)
-    @inbounds begin
-        σ, ρ, β = p
-        return SMatrix{3,3}(-σ, ρ - u[3], u[2], σ, -1, u[1], 0, -u[1], -β)
-    end
+@inbounds function lorenz_jacob(u, p, t)
+        return SMatrix{3,3}(-p[1], p[2] - u[3], u[2], p[1], -1.0, u[1], 0.0, -u[1], -p[3])
 end
 
 
@@ -284,22 +278,15 @@ The default initial condition is chaotic.
     Micluta-Campeanu S., Raportaru M.C., Nicolin A.I., Baran V., Rom. Rep. Phys.
     **70**, pp 105 (2018)
 """
-function qbh(u0=[0., -2.5830294658973876, 1.3873470962626937, -4.743416490252585];  A=1., B=0.55, D=0.4)
+function qbh(u0=[0.0, -2.5830294658973876, 1.3873470962626937, -4.743416490252585];  A=1.0, B=0.55, D=0.4)
     return CoupledODEs(qrule, u0, [A, B, D])
 end
-function qrule(z, p, t)
-    @inbounds begin
-        A, B, D = p
-        p₀, p₂ = z[1], z[2]
-        q₀, q₂ = z[3], z[4]
-
-        return SVector{4}(
-            -A * q₀ - 3 * B / √2 * (q₂^2 - q₀^2) - D * q₀ * (q₀^2 + q₂^2),
-            -q₂ * (A + 3 * √2 * B * q₀ + D * (q₀^2 + q₂^2)),
-            A * p₀,
-            A * p₂
-        )
-    end
+@inbounds function qrule(u, p, t)
+    u1 = p[1] * u[1]
+    u2 = p[1] * u[2]
+    u3 = -p[1] * u[3] - 3.0 * p[2] / √2.0 * (u[4]^2 - u[3]^2) - p[3] * u[3] * (u[3]^2 + u[4]^2)
+    u4= -u[4] * (p[1] + 3.0 * √2.0 * p[2] * u[3] + p[3] * (u[3]^2 + u[4]^2))
+    return SVector{4}(u1, u2, u3, u4)
 end
 
 """
@@ -318,15 +305,14 @@ function lorenz96(N::Int, u0 = range(0; length = N, step = 0.1); F=0.01)
     return CoupledODEs(lor96, u0, [F])
 end
 struct Lorenz96{N} end # Structure for size type
-function (obj::Lorenz96{N})(dx, x, p, t) where {N}
-    F = p[1]
+@inbounds function (obj::Lorenz96{N})(dx, x, p, t) where {N}
     # 3 edge cases
-    @inbounds dx[1] = (x[2] - x[N - 1]) * x[N] - x[1] + F
-    @inbounds dx[2] = (x[3] - x[N]) * x[1] - x[2] + F
-    @inbounds dx[N] = (x[1] - x[N - 2]) * x[N - 1] - x[N] + F
+    dx[1] = (x[2] - x[N - 1]) * x[N] - x[1] + p[1]
+    dx[2] = (x[3] - x[N]) * x[1] - x[2] + p[1]
+    dx[N] = (x[1] - x[N - 2]) * x[N - 1] - x[N] + p[1]
     # then the general case
     for n in 3:(N - 1)
-      @inbounds dx[n] = (x[n + 1] - x[n - 2]) * x[n - 1] - x[n] + F
+        dx[n] = (x[n + 1] - x[n - 2]) * x[n - 1] - x[n] + p[1]
     end
     return nothing
 end
