@@ -184,25 +184,19 @@ function double_pendulum(u0=[π/2, 0, 0, 0.5];
     return CoupledODEs(doublependulum_rule, u0, [G, L1, L2, M1, M2])
 end
 @inbounds function doublependulum_rule(u, p, t)
-    G, L1, L2, M1, M2 = p
-
-    du1 = u[2]
-
     φ = u[3] - u[1]
-    Δ = (M1 + M2) - M2*cos(φ)*cos(φ)
-
-    du2 = (M2*L1*u[2]*u[2]*sin(φ)*cos(φ) +
-               M2*G*sin(u[3])*cos(φ) +
-               M2*L2*u[4]*u[4]*sin(φ) -
-               (M1 + M2)*G*sin(u[1]))/(L1*Δ)
-
+    sin_ϕ = sin(φ); cos_ϕ = cos(φ)
+    sin_θ₂ = sin(u[3]); sin_θ₁ = sin(u[1])
+    Δ = (p[4] + p[5]) - p[5] * cos_ϕ^2
+    
+    du1 = u[2]
+    du2 = (p[5] * (cos_ϕ * (p[2] * u[2]^2 * sin_ϕ + p[1] * sin_θ₂) +
+            p[3] * u[4]^2 * sin_ϕ) -
+            (p[4]  + p[5]) * p[1] * sin_θ₁) / (p[2] * Δ)
     du3 = u[4]
-
-    du4 = (-M2*L2*u[4]*u[4]*sin(φ)*cos(φ) +
-               (M1 + M2)*G*sin(u[1])*cos(φ) -
-               (M1 + M2)*L1*u[2]*u[2]*sin(φ) -
-               (M1 + M2)*G*sin(u[3]))/(L2*Δ)
-
+    du4 = (-p[5] * p[3] * u[4]^2 * sin_ϕ * cos_ϕ +
+            (p[4]  + p[5]) * (p[1] * (sin_θ₁ * cos_ϕ  - sin_θ₂) -
+            p[2] * u[2]^2 * sin_ϕ)) / (p[3] * Δ)
     return SVector{4}(du1, du2, du3, du4)
 end
 
