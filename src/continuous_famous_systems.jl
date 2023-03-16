@@ -28,20 +28,14 @@ function lorenz(u0=[0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3)
     return CoupledODEs(lorenz_rule, u0, [σ, ρ, β])
 end
 const lorenz63 = lorenz
-function lorenz_rule(u, p, t)
-    @inbounds begin
-        σ = p[1]; ρ = p[2]; β = p[3]
-        du1 = σ*(u[2]-u[1])
-        du2 = u[1]*(ρ-u[3]) - u[2]
-        du3 = u[1]*u[2] - β*u[3]
-        return SVector{3}(du1, du2, du3)
-    end
+@inbounds function lorenz_rule(u, p, t)
+    du1 = p[1]*(u[2]-u[1])
+    du2 = u[1]*(ρ-u[3]) - u[2]
+    du3 = u[1]*u[2] - p[3]*u[3]
+    return SVector{3}(du1, du2, du3)
 end
-function lorenz_jacob(u, p, t)
-    @inbounds begin
-        σ, ρ, β = p
-        return SMatrix{3,3}(-σ, ρ - u[3], u[2], σ, -1, u[1], 0, -u[1], -β)
-    end
+@inbounds function lorenz_jacob(u, p, t)
+        return SMatrix{3,3}(-p[1], p[2] - u[3], u[2], p[1], -1.0, u[1], 0.0, -u[1], -p[3])
 end
 
 
@@ -84,20 +78,16 @@ function's documentation string.
 function chua(u0 = [0.7, 0.0, 0.0]; a = 15.6, b = 25.58, m0 = -8/7, m1 = -5/7)
     return CoupledODEs(chua_rule, u0, [a, b, m0, m1], chua_jacob)
 end
-function chua_rule(u, p, t)
-    @inbounds begin
-    a, b, m0, m1 = p
-    du1 = a * (u[2] - u[1] - chua_element(u[1], m0, m1))
+@inbounds function chua_rule(u, p, t)
+    du1 = p[1] * (u[2] - u[1] - chua_element(u[1], p[3], p[4]))
     du2 = u[1] - u[2] + u[3]
-    du3 = -b * u[2]
+    du3 = -p[2] * u[2]
     return SVector{3}(du1, du2, du3)
-    end
 end
 function chua_jacob(u, p, t)
-    a, b, m0, m1 = p
-    return @SMatrix[-a*(1 + chua_element_derivative(u[1], m0, m1)) a 0;
-                    1 -1 1;
-                    0 -b 0]
+    return SMatrix{3,3}(-p[1]*(1 + chua_element_derivative(u[1], p[3], p[4])), p[1], 0.0,
+                    1.0, -1.0, 1.0,
+                    0.0, -p[2], 0.0)
 end
 # Helper functions for Chua's circuit.
 function chua_element(x, m0, m1)
@@ -132,23 +122,19 @@ function's documentation string.
 
 [^Rössler1976]: O. E. Rössler, Phys. Lett. **57A**, pp 397 (1976)
 """
-function roessler(u0=[1, -2, 0.1]; a = 0.2, b = 0.2, c = 5.7)
+function roessler(u0=[1.0, -2.0, 0.1]; a = 0.2, b = 0.2, c = 5.7)
     return CoupledODEs(roessler_rule, u0, [a, b, c], roessler_jacob)
 end
-function roessler_rule(u, p, t)
-    @inbounds begin
-    a, b, c = p
+@inbounds function roessler_rule(u, p, t)
     du1 = -u[2]-u[3]
-    du2 = u[1] + a*u[2]
-    du3 = b + u[3]*(u[1] - c)
+    du2 = u[1] + p[1]*u[2]
+    du3 = p[2] + u[3]*(u[1] - p[3])
     return SVector{3}(du1, du2, du3)
-    end
 end
 function roessler_jacob(u, p, t)
-    a, b, c = p
-    return @SMatrix [0.0 (-1.0) (-1.0);
-                     1.0 a 0.0;
-                     u[3] 0.0 (u[1]-c)]
+    return SMatrix{3,3}(0.0, -1.0, -1.0,
+                     1.0, p[1], 0.0,
+                     u[3], 0.0, u[1]-p[3])
 end
 
 """
@@ -179,7 +165,7 @@ Jacobian is created automatically (thus methods that use the Jacobian will be sl
 The parameter container has the parameters in the same order as stated in this
 function's documentation string.
 """
-function double_pendulum(u0=[π/2, 0, 0, 0.5];
+function double_pendulum(u0=[π/2, 0.0, 0.0, 0.5];
     G=10.0, L1 = 1.0, L2 = 1.0, M1 = 1.0, M2 = 1.0)
     return CoupledODEs(doublependulum_rule, u0, [G, L1, L2, M1, M2])
 end
@@ -224,13 +210,13 @@ The function `Systems.henonheiles_ics(E, n)` generates a grid of
 
 [^HénonHeiles1964]: Hénon, M. & Heiles, C., The Astronomical Journal **69**, pp 73–79 (1964)
 """
-function henonheiles(u0=[0, -0.25, 0.42081, 0])
+function henonheiles(u0=[0.0, -0.25, 0.42081, 0.0])
     return CoupledODEs(henonheiles_rule, u0, nothing)
 end
 @inbounds function henonheiles_rule(u, p, t)
     du1 = u[3]
     du2 = u[4]
-    du3 = -u[1] - 2u[1]*u[2]
+    du3 = -u[1] - 2.0*u[1]*u[2]
     du4 = -u[2] - (u[1]^2 - u[2]^2)
     return SVector(du1, du2, du3, du4)
 end
@@ -292,22 +278,15 @@ The default initial condition is chaotic.
     Micluta-Campeanu S., Raportaru M.C., Nicolin A.I., Baran V., Rom. Rep. Phys.
     **70**, pp 105 (2018)
 """
-function qbh(u0=[0., -2.5830294658973876, 1.3873470962626937, -4.743416490252585];  A=1., B=0.55, D=0.4)
+function qbh(u0=[0.0, -2.5830294658973876, 1.3873470962626937, -4.743416490252585];  A=1.0, B=0.55, D=0.4)
     return CoupledODEs(qrule, u0, [A, B, D])
 end
-function qrule(z, p, t)
-    @inbounds begin
-        A, B, D = p
-        p₀, p₂ = z[1], z[2]
-        q₀, q₂ = z[3], z[4]
-
-        return SVector{4}(
-            -A * q₀ - 3 * B / √2 * (q₂^2 - q₀^2) - D * q₀ * (q₀^2 + q₂^2),
-            -q₂ * (A + 3 * √2 * B * q₀ + D * (q₀^2 + q₂^2)),
-            A * p₀,
-            A * p₂
-        )
-    end
+@inbounds function qrule(u, p, t)
+    u1 = p[1] * u[1]
+    u2 = p[1] * u[2]
+    u3 = -p[1] * u[3] - 3.0 * p[2] / √2.0 * (u[4]^2 - u[3]^2) - p[3] * u[3] * (u[3]^2 + u[4]^2)
+    u4= -u[4] * (p[1] + 3.0 * √2.0 * p[2] * u[3] + p[3] * (u[3]^2 + u[4]^2))
+    return SVector{4}(u1, u2, u3, u4)
 end
 
 """
@@ -326,15 +305,14 @@ function lorenz96(N::Int, u0 = range(0; length = N, step = 0.1); F=0.01)
     return CoupledODEs(lor96, u0, [F])
 end
 struct Lorenz96{N} end # Structure for size type
-function (obj::Lorenz96{N})(dx, x, p, t) where {N}
-    F = p[1]
+@inbounds function (obj::Lorenz96{N})(dx, x, p, t) where {N}
     # 3 edge cases
-    @inbounds dx[1] = (x[2] - x[N - 1]) * x[N] - x[1] + F
-    @inbounds dx[2] = (x[3] - x[N]) * x[1] - x[2] + F
-    @inbounds dx[N] = (x[1] - x[N - 2]) * x[N - 1] - x[N] + F
+    dx[1] = (x[2] - x[N - 1]) * x[N] - x[1] + p[1]
+    dx[2] = (x[3] - x[N]) * x[1] - x[2] + p[1]
+    dx[N] = (x[1] - x[N - 2]) * x[N - 1] - x[N] + p[1]
     # then the general case
     for n in 3:(N - 1)
-      @inbounds dx[n] = (x[n + 1] - x[n - 2]) * x[n - 1] - x[n] + F
+        dx[n] = (x[n + 1] - x[n - 2]) * x[n - 1] - x[n] + p[1]
     end
     return nothing
 end
