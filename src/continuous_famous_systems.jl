@@ -1991,3 +1991,89 @@ end
     du4 = x*z - d*y
     return SVector{4}(du1, du2, du3, du4)
 end
+
+"""
+```julia
+function hyper_bao(u0 = [5.0, 8.0, 12.0, 21.0];
+    a = 36.0,
+    b = 3.0,
+    c = 20.5,
+    d = 0.1,
+    k = 21.0)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a*(y - x) + w\\\\
+\\dot{y} &= c*y - x*z\\\\
+\\dot{z} &= x*y - b*z\\\\
+\\dot{w} &= k*x - d*y*z
+\\end{aligned}
+```
+A system showchasing hyperchaos obtained from the Lu system[^Bo-Cheng2008].
+
+[^Bo-Cheng2008]:
+    Bo-Cheng, B., & Zhong, L. (2008).
+    A hyperchaotic attractor coined from chaotic Lü system.
+    Chinese Physics Letters, 25(7), 2396.
+"""
+function hyper_bao(u0 = [5.0, 8.0, 12.0, 21.0];
+    a = 36.0,
+    b = 3.0,
+    c = 20.5,
+    d = 0.1,
+    k = 21.0)
+    return CoupledODEs(hyper_bao_rule, u0, [a, b, c, d, k])
+end
+
+@inbounds function hyper_bao_rule(u, p, t)
+    x, y, z, w = u
+    a, b, c, d, k = p
+    du1 = a*(y - x) + w
+    du2 = c*y - x*z
+    du3 = x*y - b*z
+    du4 = k*x - d*y*z
+    return SVector{4}(du1, du2, du3, du4)
+end
+
+"""
+```julia
+function hyper_cai(u0 = [1.0, 1.0, 20.0, 10.0];
+    a = 27.5,
+    b = 3.0,
+    c = 19.3,
+    d = 2.9,
+    e = 3.3)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a*(y - x)\\\\
+\\dot{y} &= b*x + c*y - x*z + w\\\\
+\\dot{z} &= -d*z + y^2\\\\
+\\dot{w} &= -e*x
+\\end{aligned}
+```
+A system showchasing hyperchaos obtained from the Finance system[^Cai2007].
+
+[^Cai2007]:
+    Cai, G., & Huang, J. (2007).
+    A new finance chaotic attractor.
+    International Journal of Nonlinear Science, 3(3), 213-220.
+"""
+function hyper_cai(u0 = [1.0, 1.0, 20.0, 10.0];
+    a = 27.5,
+    b = 3.0,
+    c = 19.3,
+    d = 2.9,
+    e = 3.3)
+    return CoupledODEs(hyper_cai_rule, u0, [a, b, c, d, e])
+end
+
+@inbounds function hyper_cai_rule(u, p, t)
+    x, y, z, w = u
+    a, b, c, d, e = p
+    du1 = a*(y - x)
+    du2 = b*x + c*y - x*z + w
+    du3 = -d*z + y^2
+    du4 = -e*x
+    return SVector{4}(du1, du2, du3, du4)
+end
