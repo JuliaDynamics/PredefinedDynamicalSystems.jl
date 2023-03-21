@@ -2121,11 +2121,11 @@ end
 
 """
 ```julia
-function hyper_lu(u0 = [5.0, 8.0, 12.0, 21.0];
+function hyper_pang(u0 = [1.0, 1.0, 10.0, 1.0];
     a = 36,
     b = 3.0,
     c = 20.0,
-    d = 1.3)
+    d = 2.0)
 ```
 ```math
 \\begin{aligned}
