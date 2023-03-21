@@ -2077,3 +2077,85 @@ end
     du4 = -e*x
     return SVector{4}(du1, du2, du3, du4)
 end
+
+"""
+```julia
+function hyper_lu(u0 = [5.0, 8.0, 12.0, 21.0];
+    a = 36,
+    b = 3.0,
+    c = 20.0,
+    d = 1.3)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a*(y - x) + w\\\\
+\\dot{y} &= c*y - x*z\\\\
+\\dot{z} &= x*y - b*z\\\\
+\\dot{w} &= d*w + x*z
+\\end{aligned}
+```
+A system showchasing hyperchaos obtained from the Lu system[^Chen2006].
+
+[^Chen2006]:
+    Chen, A., Lu, J., Lü, J., & Yu, S. (2006).
+    Generating hyperchaotic Lü attractor via state feedback control.
+    Physica A: Statistical Mechanics and its Applications, 364, 103-110.
+"""
+function hyper_lu(u0 = [5.0, 8.0, 12.0, 21.0];
+    a = 36,
+    b = 3.0,
+    c = 20.0,
+    d = 1.3)
+    return CoupledODEs(hyper_lu_rule, u0, [a, b, c, d])
+end
+
+@inbounds function hyper_lu_rule(u, p, t)
+    x, y, z, w = u
+    a, b, c, d = p
+    du1 = a*(y - x) + w
+    du2 = c*y - x*z
+    du3 = x*y - b*z
+    du4 = d*w + x*z
+    return SVector{4}(du1, du2, du3, du4)
+end
+
+"""
+```julia
+function hyper_lu(u0 = [5.0, 8.0, 12.0, 21.0];
+    a = 36,
+    b = 3.0,
+    c = 20.0,
+    d = 1.3)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a*(y - x)\\\\
+\\dot{y} &= -x*z + c*y + w\\\\
+\\dot{z} &= x*y - b*z\\\\
+\\dot{w} &= -d*x - d*y
+\\end{aligned}
+```
+A system showchasing hyperchaos obtained from the Lu system[^Pang2011].
+
+[^Pang2011]:
+    Pang, S., & Liu, Y. (2011).
+    A new hyperchaotic system from the Lü system and its control.
+    Journal of Computational and Applied Mathematics, 235(8), 2775-2789.
+"""
+function hyper_pang(u0 = [1.0, 1.0, 10.0, 1.0];
+    a = 36,
+    b = 3.0,
+    c = 20.0,
+    d = 2.0)
+    return CoupledODEs(hyper_pang_rule, u0, [a, b, c, d])
+end
+
+@inbounds function hyper_pang_rule(u, p, t)
+    x, y, z, w = u
+    a, b, c, d = p
+    du1 = a*(y - x)
+    du2 = -x*z + c*y + w
+    du3 = x*y - b*z
+    du4 = -d*x - d*y
+    return SVector{4}(du1, du2, du3, du4)
+end
