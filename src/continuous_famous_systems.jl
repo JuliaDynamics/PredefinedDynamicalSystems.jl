@@ -30,7 +30,7 @@ end
 const lorenz63 = lorenz
 @inbounds function lorenz_rule(u, p, t)
     du1 = p[1]*(u[2]-u[1])
-    du2 = u[1]*(ρ-u[3]) - u[2]
+    du2 = u[1]*(p[2]-u[3]) - u[2]
     du3 = u[1]*u[2] - p[3]*u[3]
     return SVector{3}(du1, du2, du3)
 end
