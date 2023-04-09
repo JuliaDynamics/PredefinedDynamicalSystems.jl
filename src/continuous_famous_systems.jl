@@ -733,7 +733,7 @@ end
 ```
 Thomas' cyclically symmetric attractor is a 3D strange attractor originally proposed
 by René Thomas[^Thomas1999]. It has a simple form which is cyclically symmetric in the
-x,y, and z variables and can be viewed as the trajectory of a frictionally dampened
+x, y, and z variables and can be viewed as the trajectory of a frictionally dampened
 particle moving in a 3D lattice of forces.
 For more see the [Wikipedia page](https://en.wikipedia.org/wiki/Thomas%27_cyclically_symmetric_attractor).
 
@@ -852,9 +852,9 @@ Diffusionless Lorenz system: it is *probably* the simplest rotationnaly invarian
 chaotic flow.
 ```math
 \\begin{aligned}
-\\dot x = y − x, \\\\
-\\dot y = -xz, \\\\
-\\dot z = xy - R. \\\\
+\\dot x = y − x \\\\
+\\dot y = -xz \\\\
+\\dot z = xy - R \\\\
 \\end{aligned}
 ```
 
@@ -1009,7 +1009,7 @@ hodgkinhuxley(u0=[-60.0, 0.0, 0.0, 0.0]; I = 12.0, Vna = 50.0, Vk = -77.0, Vl = 
 ```
 ```math
 \\begin{aligned}
-C_m \\frac{dV_m}{dt} = -\\overline{g}_\\mathrm{K} n^4 (V_m - V_\\mathrm{K}) - \\overline{g}_\\mathrm{Na} m^3 h(V_m - V_\\mathrm{Na}) - \\overline{g}_l (V_m - Vl) + I\\\\
+C_m \\frac{dV_m}{dt} &= -\\overline{g}_\\mathrm{K} n^4 (V_m - V_\\mathrm{K}) - \\overline{g}_\\mathrm{Na} m^3 h(V_m - V_\\mathrm{Na}) - \\overline{g}_l (V_m - Vl) + I\\\\
 \\dot{n} &= \\alpha_n(V_m)(1-n) - \\beta_n(V_m)n \\\\
 \\dot{m} &= \\alpha_m(V_m)(1-m) - \\beta_m(V_m)m \\\\
 \\dot{h} &= \\alpha_h(V_m)(1-h) - \\beta_h(V_m)h \\\\
@@ -1076,7 +1076,7 @@ vanderpol(u0=[0.5, 0.0]; μ=1.5, F=1.2, T=10) -> ds
 ```
 ```math
 \\begin{aligned}
-\\ddot{x} -\\mu (1-x^2) \\dot{x} + x = F \\cos(\\frac{2\\pi t}{T})
+\\ddot{x} -\\mu (1-x^2) \\dot{x} + x = F \\cos(2\\pi t / T)
 \\end{aligned}
 ```
 The forced van der Pol oscillator is an oscillator with a nonlinear damping term driven
@@ -1091,7 +1091,7 @@ additionally have chaotic behavior.
 The van der Pol oscillator is a specific case of both the FitzHugh-Nagumo neural
 model [^Kanamaru2007]. The default damping parameter is taken from [^Strogatz2015]
 and the forcing parameters are taken from [^Kanamaru2007], which generate periodic
-oscillations. Setting `\\mu=8.53` generates chaotic oscillations.
+oscillations. Setting ``\\mu=8.53`` generates chaotic oscillations.
 
 [^Kanamaru2007]: Takashi Kanamaru (2007) "Van der Pol oscillator", Scholarpedia, 2(1):2202.
 
@@ -1277,7 +1277,7 @@ It can be written in cartesian coordinates as [^Deco2017]
 ```
 
 The dynamical analysis of the system is greatly facilitated by putting it in polar coordinates,
-where it becomes the normal form of the supercritical Hopf bifurcation) [^Strogatz2015].
+where it takes the normal form of the supercritical Hopf bifurcation) [^Strogatz2015].
 ```math
 \\begin{aligned}
 \\dot{r} &= \\mu r - r^3, \\\\
@@ -1350,8 +1350,8 @@ riddled_basins(u0=[0.5, 0.6, 0, 0]; γ=0.05, x̄ = 1.9, f₀=2.3, ω =3.5, x₀=
 ```math
 \\begin{aligned}
 \\dot{x} &= v_x, \\quad \\dot{y} = v_z \\\\
-\\dot{v}_x &= -\\gamma v_x - ( -4x(1-x^2) +y^2) + f_0 \\sin(\\omega t)x_0 \\\\
-\\dot{v}_y &= -\\gamma v_y - (2y(x+\\bar{x})) + f_0 \\sin(\\omega t)y_0
+\\dot{v}_x &= -\\gamma v_x - [ -4x(1-x^2) +y^2] + f_0 \\sin(\\omega t)x_0 \\\\
+\\dot{v}_y &= -\\gamma v_y - 2y (x+\\bar{x}) + f_0 \\sin(\\omega t)y_0
 \\end{aligned}
 ```
 This 5 dimensional (time-forced) dynamical system was used by Ott et al [^OttRiddled2014]
@@ -1393,14 +1393,14 @@ Pacific barnacle [^MorrisLecar1981]. Its evolution is given by:
 ```math
 \\begin{aligned}
 \\dot{V} &= -g_{Ca} M(V) (V - V_{Ca}) - g_K N (V - V_K) - g_L (V - V_L) + I \\\\
-\\dot{N} &= (1/\tau) (-N + G(V)) \\\\
+\\dot{N} &= (-N + G(V)) / \tau \\\\
 \\end{aligned}
 ```
 with
 ```math
 \\begin{aligned}
-M(V) = 0.5 (1 + \tanh((x-V1)/V2)) \\\\
-G(V) = 0.5 (1 + \tanh((x-V3)/V4)) \\\\
+M(V) = 0.5 (1 + \\tanh((x-V1)/V2)) \\\\
+G(V) = 0.5 (1 + \\tanh((x-V3)/V4)) \\\\
 ```
 
 [^IzhikevichBook]:
@@ -2003,10 +2003,10 @@ function hyper_bao(u0 = [5.0, 8.0, 12.0, 21.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x) + w\\\\
-\\dot{y} &= c*y - x*z\\\\
-\\dot{z} &= x*y - b*z\\\\
-\\dot{w} &= k*x - d*y*z
+\\dot{x} &= a (y - x) + w\\\\
+\\dot{y} &= c y - x z\\\\
+\\dot{z} &= x y - b z\\\\
+\\dot{w} &= k x - d y z
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Lu system[^Bo-Cheng2008].
@@ -2046,10 +2046,10 @@ function hyper_cai(u0 = [1.0, 1.0, 20.0, 10.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x)\\\\
-\\dot{y} &= b*x + c*y - x*z + w\\\\
-\\dot{z} &= -d*z + y^2\\\\
-\\dot{w} &= -e*x
+\\dot{x} &= a (y - x)\\\\
+\\dot{y} &= b x + c y - x z + w\\\\
+\\dot{z} &= -d z + y^2\\\\
+\\dot{w} &= -e x
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Finance system[^Cai2007].
@@ -2088,10 +2088,10 @@ function hyper_lu(u0 = [5.0, 8.0, 12.0, 21.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x) + w\\\\
-\\dot{y} &= c*y - x*z\\\\
-\\dot{z} &= x*y - b*z\\\\
-\\dot{w} &= d*w + x*z
+\\dot{x} &= a (y - x) + w\\\\
+\\dot{y} &= c y - x z\\\\
+\\dot{z} &= x y - b z\\\\
+\\dot{w} &= d w + x z
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Lu system[^Chen2006].
@@ -2129,10 +2129,10 @@ function hyper_pang(u0 = [1.0, 1.0, 10.0, 1.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x)\\\\
-\\dot{y} &= -x*z + c*y + w\\\\
-\\dot{z} &= x*y - b*z\\\\
-\\dot{w} &= -d*x - d*y
+\\dot{x} &= a (y - x)\\\\
+\\dot{y} &= -x z + c y + w\\\\
+\\dot{z} &= x y - b z\\\\
+\\dot{w} &= -d x - d y
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Lu system[^Pang2011].
