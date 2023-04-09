@@ -852,9 +852,9 @@ Diffusionless Lorenz system: it is *probably* the simplest rotationnaly invarian
 chaotic flow.
 ```math
 \\begin{aligned}
-\\dot x = y − x \\\\
-\\dot y = -xz \\\\
-\\dot z = xy - R \\\\
+\\dot x = y − x. \\\\
+\\dot y = -xz. \\\\
+\\dot z = xy - R. \\\\
 \\end{aligned}
 ```
 
