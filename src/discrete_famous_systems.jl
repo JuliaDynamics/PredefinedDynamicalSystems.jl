@@ -311,13 +311,13 @@ Vladimir Arnold in the 1960s. [1]
 [1] : Arnol'd, V. I., & Avez, A. (1968). Ergodic problems of classical mechanics.
 """
 function arnoldcat(u0 = [0.001245, 0.00875])
-    return DeterministicIteratedMap(arnoldcat_rule, u0, nothing, arnoldcat_jacob)
+    return DeterministicIteratedMap(arnoldcat_rule, u0, nothing)
 end # Should give Lyapunov exponents [2.61803, 0.381966]
 function arnoldcat_rule(u, p, n)
     x,y = u
     return SVector{2}((2x + y) % 1.0, (x + y) % 1)
 end
-arnoldcat_jacob(u, p, n) = @SMatrix [2 1; 1 1]
+arnoldcat_jacob(u, p, n) = SMatrix{2,2}([2 1; 1 1])
 
 
 
@@ -343,7 +343,7 @@ This map illustrate the fractalization of the basins boundary and its uncertaint
     An obstruction to predictability, Physics Letters A, 99, 9, 1983
 """
 function grebogi_map(u0 = [0.2, 0.]; a = 1.32, b=0.9, J₀=0.3)
-    return DeterministicIteratedMap(grebogi_map_rule, u0, [a,b,J₀], grebogi_map_J)
+    return DeterministicIteratedMap(grebogi_map_rule, u0, [a,b,J₀])
 end
 function grebogi_map_rule(u, p, n)
     θ = u[1]; x = u[2]
@@ -354,10 +354,10 @@ function grebogi_map_rule(u, p, n)
     return SVector{2}(dθ,dx)
 end
 
-function grebogi_map_J(u, p, n)
+function grebogi_map_jacob(u, p, n)
     θ = u[1]; x = u[2]
     a,b,J₀ = p
-    return @SMatrix [(1+2*a*cos(2*θ) - 4*b*cos(4*θ) -x*cos(θ)) J₀*sin(θ); -sin(θ) 0]
+    return SMatrix{2,2}([(1+2*a*cos(2*θ) - 4*b*cos(4*θ) -x*cos(θ)) J₀*sin(θ); -sin(θ) 0])
 end
 
 
@@ -407,7 +407,7 @@ The parameter μ should be kept in the interval `[0,2]`. At μ=2, the tent map c
 [^Ott2002] : E. Ott, "Chaos in Dynamical Systems" (2nd ed.) Cambridge: Cambridge University Press (2010).
 """
 function tentmap(u0 = 0.25, μ = 2.0)
-    return DeterministicIteratedMap(tentmap_rule, u0, [μ], tentmap_jac)
+    return DeterministicIteratedMap(tentmap_rule, u0, [μ])
 end
 function tentmap_rule(x, p, n)
     μ = p[1]
@@ -417,7 +417,7 @@ function tentmap_rule(x, p, n)
         μ*(1 - x)
     end
 end
-function tentmap_jac(x, p, n)
+function tentmap_jacob(x, p, n)
     μ = p[1]
     if x < -0.5
         μ
@@ -440,7 +440,7 @@ The parameter β controls the dynamics of the map. Its Lyapunov exponent can be 
 At β=2, it becomes the dyadic transformation, also known as the bit shift map, the 2x mod 1 map, the Bernoulli map or the sawtooth map. The typical trajectory for this case is chaotic, though there are countably infinite periodic orbits [^Ott2002].
 """
 function betatransformationmap(u0 = 0.25; β=2.0)
-    return DeterministicIteratedMap(betatransformation_rule, u0, [β], betatransformation_jac)
+    return DeterministicIteratedMap(betatransformation_rule, u0, [β])
 end
 function betatransformation_rule(x, p, n)
     @inbounds β = p[1]
@@ -450,7 +450,7 @@ function betatransformation_rule(x, p, n)
         β*x - 1
     end
 end
-function betatransformation_jac(x, p, n)
+function betatransformation_jacob(x, p, n)
     β = p[1]
 end
 
@@ -476,7 +476,7 @@ The parameters σ and β  are generally kept at `0.001`, while α is chosen to g
 [^Cao2013] : H. Cao and Y Wu, "Bursting types and stable domains of Rulkov neuron network with mean field coupling", International Journal of Bifurcation and Chaos,23:1330041 (2013).
 """
 function rulkovmap(u0=[1.0, 1.0]; α=4.1, β=0.001, σ=0.001)
-    return DeterministicIteratedMap(rulkovmap_rule, u0, [α, β, σ], rulkovmap_jac)
+    return DeterministicIteratedMap(rulkovmap_rule, u0, [α, β, σ])
 end
 @inbounds function rulkovmap_rule(x, p, n)
     α, β, σ = p
@@ -484,10 +484,10 @@ end
     dy = x[2] - σ*x[1] -β
     return SVector{2}(dx, dy)
 end
-@inbounds function rulkovmap_jac(x, p, n)
+@inbounds function rulkovmap_jacob(x, p, n)
     α, β, σ = p
-    return @SMatrix [(-2*x[1]/(1+x[1]^2)^2) 1;
-                    -σ 1]
+    return SMatrix{2,2}([(-2*x[1]/(1+x[1]^2)^2) 1;
+                    -σ 1])
 end
 
 """
@@ -507,7 +507,7 @@ The default parameters are chosen to give a unique chaotic attractor. A double a
 [^Skiadas2008] : "Chaotic Modelling and Simulation: Analysis of Chaotic Models, Attractors and Forms", CRC Press (2008).
 """
 function ikedamap(u0=[1.0, 1.0]; a=1.0, b=1.0, c=0.4, d =6.0)
-    return DeterministicIteratedMap(ikedamap_rule, u0, [a,b,c,d], ikedamap_jac)
+    return DeterministicIteratedMap(ikedamap_rule, u0, [a,b,c,d])
 end
 @inbounds function ikedamap_rule(u, p, n)
     a,b,c,d  = p
@@ -516,14 +516,14 @@ end
     dy = b*( u[1]*sin(t) + u[2]*cos(t) )
     return SVector{2}(dx, dy)
 end
-@inbounds function ikedamap_jac(u, p, n)
+@inbounds function ikedamap_jacob(u, p, n)
     #Checked the calculation of the jacobian with the calculations here https://www.math.arizona.edu/~ura-reports/001/huang.pojen/2000_Report.html. It has a wrong sign in the model definition, but the Jacobian fits.
     a,b,c,d = p
     x,y = u
     t = c - d/(1 + x^2 + y^2)
     aux = 2*d/(1+x^2+y^2)
-    return @SMatrix [(b*(cos(t)-x^2*sin(t)*aux -x*y*cos(t)*aux)) (b*(-sin(t) -x*y*sin(t)*aux -y^2*cos(t)*aux));
-                    (b*(sin(t) +x^2*cos(t)*aux) -x*y*sin(t)*aux) (b*(cos(t) -x*y*cos(t)*aux -y^2*sin(t)*aux))]
+    return SMatrix{2,2}([(b*(cos(t)-x^2*sin(t)*aux -x*y*cos(t)*aux)) (b*(-sin(t) -x*y*sin(t)*aux -y^2*cos(t)*aux));
+                    (b*(sin(t) +x^2*cos(t)*aux) -x*y*sin(t)*aux) (b*(cos(t) -x*y*cos(t)*aux -y^2*sin(t)*aux))])
 end
 
 

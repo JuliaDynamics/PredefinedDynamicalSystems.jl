@@ -76,7 +76,7 @@ function's documentation string.
 
 """
 function chua(u0 = [0.7, 0.0, 0.0]; a = 15.6, b = 25.58, m0 = -8/7, m1 = -5/7)
-    return CoupledODEs(chua_rule, u0, [a, b, m0, m1], chua_jacob)
+    return CoupledODEs(chua_rule, u0, [a, b, m0, m1])
 end
 @inbounds function chua_rule(u, p, t)
     du1 = p[1] * (u[2] - u[1] - chua_element(u[1], p[3], p[4]))
@@ -123,7 +123,7 @@ function's documentation string.
 [^Rössler1976]: O. E. Rössler, Phys. Lett. **57A**, pp 397 (1976)
 """
 function roessler(u0=[1.0, -2.0, 0.1]; a = 0.2, b = 0.2, c = 5.7)
-    return CoupledODEs(roessler_rule, u0, [a, b, c], roessler_jacob)
+    return CoupledODEs(roessler_rule, u0, [a, b, c])
 end
 @inbounds function roessler_rule(u, p, t)
     du1 = -u[2]-u[3]
@@ -392,7 +392,7 @@ function's documentation string.
 [^Gissinger2012]: C. Gissinger, Eur. Phys. J. B **85**, 4, pp 1-12 (2012)
 """
 function gissinger(u0 = [3, 0.5, 1.5]; μ = 0.119, ν = 0.1, Γ = 0.9)
-    return CoupledODEs(gissinger_rule, u0, [μ, ν, Γ], gissinger_jacob)
+    return CoupledODEs(gissinger_rule, u0, [μ, ν, Γ])
 end
 function gissinger_rule(u, p, t)
     μ, ν, Γ = p
@@ -403,9 +403,9 @@ function gissinger_rule(u, p, t)
 end
 function gissinger_jacob(u, p, t)
     μ, ν, Γ = p
-    return @SMatrix [μ -u[3] -u[2];
+    return SMatrix{3,3}([μ -u[3] -u[2];
                      u[3] -ν u[1];
-                     u[2] u[1] -1]
+                     u[2] u[1] -1])
 end
 
 """
@@ -425,7 +425,7 @@ reversal events by means of a double-disk dynamo system.
 [^Rikitake1958]: T. Rikitake Math. Proc. Camb. Phil. Soc. **54**, pp 89–105, (1958)
 """
 function rikitake(u0 = [1, 0, 0.6]; μ = 1.0, α = 1.0)
-    return CoupledODEs(rikitake_rule, u0, [μ, α], rikitake_jacob)
+    return CoupledODEs(rikitake_rule, u0, [μ, α])
 end
 function rikitake_rule(u, p, t)
     μ, α = p
@@ -441,9 +441,9 @@ function rikitake_jacob(u, p, t)
     xdot = -μ*x + y*z
     ydot = -μ*y + x*(z - α)
     zdot = 1 - x*y
-    return @SMatrix [-μ  z  y;
+    return SMatrix{3,3}([-μ  z  y;
                      z-α -μ x;
-                     -y  -x 0]
+                     -y  -x 0])
 end
 
 """
@@ -472,7 +472,7 @@ See Chapter 4 of "Elegant Chaos" by J. C. Sprott. [^Sprott2010]
     Sprott, J. C. (2010). *Elegant chaos: algebraically simple chaotic flows*.
     World Scientific.
 """
-nosehoover(u0 = [0, 0.1, 0]) = CoupledODEs(nosehoover_rule, u0, nothing, nosehoover_jacob)
+nosehoover(u0 = [0, 0.1, 0]) = CoupledODEs(nosehoover_rule, u0, nothing)
 function nosehoover_rule(u, p, t)
     x,y,z = u
     xdot = y
@@ -482,9 +482,9 @@ function nosehoover_rule(u, p, t)
 end
 function nosehoover_jacob(u, p, t)
     x,y,z = u
-    return @SMatrix [0 1 0;
+    return SMatrix{3,3}([0 1 0;
                      -1 z y;
-                     0 -2y 0]
+                     0 -2y 0])
 end
 
 """
@@ -521,7 +521,7 @@ diameter is 1.
 """
 function antidots(u0 = [0.5, 0.5, 0.25, 0.25];
     d0 = 0.5, c = 0.2, B = 1.0)
-    return CoupledODEs(antidot_rule, u0, [B, d0, c], antidot_jacob)
+    return CoupledODEs(antidot_rule, u0, [B, d0, c])
 end
 
 function antidot_rule(u, p, t)
@@ -612,7 +612,7 @@ J. C. Sprott. [^Sprott2010]
     World Scientific.
 """
 function ueda(u0 = [3.0, 0]; k = 0.1, B = 12.0)
-    return CoupledODEs(ueda_rule, u0, [k, B], ueda_jacob)
+    return CoupledODEs(ueda_rule, u0, [k, B])
 end
 function ueda_rule(u, p, t)
     x,y = u
@@ -624,8 +624,8 @@ end
 function ueda_jacob(u, p, t)
     x,y = u
     k, B = p
-    return @SMatrix [0      1;
-                     -3*x^2 -k]
+    return SMatrix{2,2}( [0      1;
+                     -3*x^2 -k])
 end
 
 
@@ -777,8 +777,7 @@ between the boxes (polar and equatorial ocean basins) and ``\\eta_i`` are parame
     Stommel, Thermohaline convection with two stable regimes of flow. Tellus, 13(2)
 """
 function stommel_thermohaline(u = [0.3, 0.2]; η1 = 3.0, η2 = 1, η3 = 0.3)
-    ds = CoupledODEs(stommel_thermohaline_rule, u, [η1, η2, η3],
-    stommel_thermohaline_jacob)
+    ds = CoupledODEs(stommel_thermohaline_rule, u, [η1, η2, η3])
 end
 function stommel_thermohaline_rule(x, p, t)
     T, S = x
@@ -791,11 +790,11 @@ function stommel_thermohaline_jacob(x, p, t)
     η1, η2, η3 = p
     q = abs(T-S)
     if T ≥ S
-        return @SMatrix [(-1 - 2T + S)  (T);
-                         (-S)  (-η3 - T + 2S)]
+        return SMatrix{2,2}( [(-1 - 2T + S)  (T);
+                         (-S)  (-η3 - T + 2S)])
     else
-        return @SMatrix [(-1 + 2T - S)  (-T);
-                         (+S)  (-η3 + T - 2S)]
+        return SMatrix{2,2}([(-1 + 2T - S)  (-T);
+                         (+S)  (-η3 + T - 2S)])
     end
 end
 
@@ -839,9 +838,9 @@ end
 function lorenz84_rule_jacob(u, p, t)
     F, G, a, b = p
 	x, y, z = u
-    return @SMatrix [(-a)  (-2y)  (-2z);
+    return SMatrix{3,3}( [(-a)  (-2y)  (-2z);
                      y-b*z  x-1  (-b*x);
-                     b*y+z  b*x   x-1]
+                     b*y+z  b*x   x-1])
 end
 
 
@@ -873,8 +872,7 @@ bsn, att = basins_of_attraction((xg, yg), pmap)
     Int. Jour. Bifurcation and Chaos 24, 1450009 (2014)
 """
 function lorenzdl(u = [0.1, 0.1, 0.1]; R=4.7)
-    return CoupledODEs(lorenzdl_rule, u, R,
-    lorenzdl_rule_jacob)
+    return CoupledODEs(lorenzdl_rule, u, R)
 end
 @inline @inbounds function lorenzdl_rule(u, p, t)
     R = p
@@ -886,9 +884,9 @@ end
 end
 function lorenzdl_rule_jacob(u, p, t)
     x, y, z = u
-    return @SMatrix [-1     1     0;
+    return SMatrix{3,3}( [-1     1     0;
                      -z     0    -x;
-                      y     x     0]
+                      y     x     0])
 end
 
 """
@@ -983,8 +981,7 @@ In the original paper there were no parameters, which are added here for explora
 """
 function sprott_dissipative_conservative(u0 = [1.0, 0, 0]; a = 2, b = 1, c = 1)
     return CoupledODEs(
-        sprott_dissipative_conservative_f, u0, [a, b, c], sprott_dissipative_conservative_J
-    )
+        sprott_dissipative_conservative_f, u0, [a, b, c])
 end
 
 function sprott_dissipative_conservative_f(u, p, t)
@@ -995,12 +992,12 @@ function sprott_dissipative_conservative_f(u, p, t)
     dz = c*x - x^2 - y^2
     return SVector(dx, dy, dz)
 end
-function sprott_dissipative_conservative_J(u, p, t)
+function sprott_dissipative_conservative_jacob(u, p, t)
     a, b, c = p
     x, y, z = u
-    return @SMatrix [a*y + z     1 + a*x     +x;
+    return SMatrix{3,3}( [a*y + z     1 + a*x     +x;
                     -4x     b*z    b*y;
-                    (c - 2x)    (-2y)  0]
+                    (c - 2x)    (-2y)  0])
 end
 
 """
@@ -1105,7 +1102,7 @@ oscillations. Setting ``\\mu=8.53`` generates chaotic oscillations.
     The London, Edinburgh and Dublin Phil. Mag. & J. of Sci., 2(7), 978–992.
 """
 function vanderpol(u0=[0.5, 0.0]; μ=1.5, F=1.2, T=10)
-    return CoupledODEs(vanderpol_rule, u0, [μ, F, T], vanderpol_jac)
+    return CoupledODEs(vanderpol_rule, u0, [μ, F, T])
 end
 function vanderpol_rule(u, p, t)
     @inbounds begin
@@ -1115,11 +1112,11 @@ function vanderpol_rule(u, p, t)
         return SVector{2}(du1, du2)
     end
 end
-function vanderpol_jac(u, p, t)
+function vanderpol_jacob(u, p, t)
     @inbounds begin
         μ = p[1]
-        J = @SMatrix [0 1;
-        (-μ*(2*u[1]-1)*u[2]-1) (μ*(1 - u[1]^2))]
+        J = SMatrix{2,2}( [0 1;
+        (-μ*(2*u[1]-1)*u[2]-1) (μ*(1 - u[1]^2))])
         return J
     end
 end
@@ -1153,7 +1150,7 @@ oscillations.
     https://mathworld.wolfram.com/Lotka-VolterraEquations.html
 """
 function lotkavolterra(u0=[10.0, 5.0]; α = 1.5, β = 1, δ=1, γ=3)
-    return CoupledODEs(lotkavolterra_rule, u0, [α, β, δ, γ], lotkavolterra_jac)
+    return CoupledODEs(lotkavolterra_rule, u0, [α, β, δ, γ])
 end
 function lotkavolterra_rule(u, p, t)
     @inbounds begin
@@ -1163,11 +1160,11 @@ function lotkavolterra_rule(u, p, t)
         return SVector{2}(du1, du2)
     end
 end
-function lotkavolterra_jac(u, p, t)
+function lotkavolterra_jacob(u, p, t)
     @inbounds begin
         α, β, δ, γ = p
-        J = @SMatrix [(α - β*u[2]) (-β*u[1]);
-        (δ*u[2]) (δ*u[1] - γ)]
+        J = SMatrix{2,2}([(α - β*u[2]) (-β*u[1]);
+        (δ*u[2]) (δ*u[1] - γ)])
         return J
     end
 end
@@ -1199,7 +1196,7 @@ periodic bursting.
     Proc. R. Soc. Lond. B 221, 87-102.
 """
 function hindmarshrose(u0=[-1.0, 0.0, 0.0]; a=1, b=3, c=1, d=5, r=0.001, s=4, xr=-8/5, I=2.0)
-    return CoupledODEs(hindmarshrose_rule, u0, [a,b,c,d,r,s,xr, I], hindmarshrose_jac)
+    return CoupledODEs(hindmarshrose_rule, u0, [a,b,c,d,r,s,xr, I])
 end
 function hindmarshrose_rule(u, p, t)
     @inbounds begin
@@ -1210,12 +1207,12 @@ function hindmarshrose_rule(u, p, t)
         return SVector{3}(du1, du2, du3)
     end
 end
-function hindmarshrose_jac(u, p, t)
+function hindmarshrose_jacob(u, p, t)
     @inbounds begin
         a,b,c,d,r,s, xr, I = p
-        J = @SMatrix [(-3*a*u[1]^2 + 2*b*u[1]) 1 -1;
+        J = SMatrix{3,3}( [(-3*a*u[1]^2 + 2*b*u[1]) 1 -1;
         -2*d*u[1] -1 0;
-        r*s 0 -r]
+        r*s 0 -r])
         return J
     end
 end
@@ -1302,7 +1299,7 @@ radius `\\sqrt(\\mu)`.
     Boulder, CO :Westview Press, a member of the Perseus Books Group (2015).
 """
 function stuartlandau_oscillator(u0=[1.0, 0.0]; μ=1.0, ω=1.0, b=1)
-    return CoupledODEs(stuartlandau_rule, u0, [μ, ω, b], stuartlandau_jac)
+    return CoupledODEs(stuartlandau_rule, u0, [μ, ω, b])
 end
 function stuartlandau_rule(u, p, t)
     @inbounds begin
@@ -1312,11 +1309,11 @@ function stuartlandau_rule(u, p, t)
         return SVector{2}(du1, du2)
     end
 end
-function stuartlandau_jac(u, p, t)
+function stuartlandau_jacob(u, p, t)
     @inbounds begin
         μ, ω, b = p
-        J = @SMatrix [(μ - 3*u[1]^2 -u[2]^2 -2*b*u[1]*u[2]) (-2*u[1]*u[2] -ω -b*u[1]^2 -3*b*u[2]^2);
-            (-2*u[1]*u[2] +ω +b*u[2]^2 +3*b*u[1]^2) (μ -u[1]^2 -3*u[2]^2 +2*b*u[1]*u[2])]
+        J = SMatrix{2,2}( [(μ - 3*u[1]^2 -u[2]^2 -2*b*u[1]*u[2]) (-2*u[1]*u[2] -ω -b*u[1]^2 -3*b*u[2]^2);
+            (-2*u[1]*u[2] +ω +b*u[2]^2 +3*b*u[1]^2) (μ -u[1]^2 -3*u[2]^2 +2*b*u[1]*u[2])])
         return J
     end
 end
