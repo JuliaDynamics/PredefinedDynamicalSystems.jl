@@ -261,7 +261,7 @@ function pm_rule(x, p, n)
         -4x + 3
     end
 end
-function pm_jac(x, p, n)
+function pomeau_manneville_jacob(x, p, n)
     if x < -0.5
         -4.0
     elseif -0.5 ≤ x ≤ 0.5
@@ -296,7 +296,7 @@ function manneville_f(x, p, t)
     y = (1+e)*x + (1-e)*x*x
     return y%1
 end
-manneville_j(x, p, n) = (1+p[1]) + (1-p[1])*2x
+manneville_simple_jacob(x, p, n) = (1+p[1]) + (1-p[1])*2x
 
 """
 ```julia
@@ -357,7 +357,7 @@ end
 function grebogi_map_jacob(u, p, n)
     θ = u[1]; x = u[2]
     a,b,J₀ = p
-    return SMatrix{2,2}([(1+2*a*cos(2*θ) - 4*b*cos(4*θ) -x*cos(θ)) J₀*sin(θ); -sin(θ) 0])
+    return SMatrix{2,2}(1+2*a*cos(2*θ) - 4*b*cos(4*θ) -x*cos(θ), -sin(θ), J₀*sin(θ), 0)
 end
 
 
@@ -486,8 +486,7 @@ end
 end
 @inbounds function rulkovmap_jacob(x, p, n)
     α, β, σ = p
-    return SMatrix{2,2}([(-2*x[1]/(1+x[1]^2)^2) 1;
-                    -σ 1])
+    return SMatrix{2,2}(-2*x[1]/(1+x[1]^2)^2,-σ, 1, 1)
 end
 
 """
@@ -521,9 +520,9 @@ end
     a,b,c,d = p
     x,y = u
     t = c - d/(1 + x^2 + y^2)
-    aux = 2*d/(1+x^2+y^2)
-    return SMatrix{2,2}([(b*(cos(t)-x^2*sin(t)*aux -x*y*cos(t)*aux)) (b*(-sin(t) -x*y*sin(t)*aux -y^2*cos(t)*aux));
-                    (b*(sin(t) +x^2*cos(t)*aux) -x*y*sin(t)*aux) (b*(cos(t) -x*y*cos(t)*aux -y^2*sin(t)*aux))])
+    aux = 2*d/(1+x^2+y^2)      
+    return SMatrix{2,2}(b*(cos(t)-x^2*sin(t)*aux -x*y*cos(t)*aux), b*(sin(t) +x^2*cos(t)*aux)-x*y*sin(t)*aux, 
+    b*(-sin(t) -x*y*sin(t)*aux -y^2*cos(t)*aux), b*(cos(t) -x*y*cos(t)*aux -y^2*sin(t)*aux))                
 end
 
 
