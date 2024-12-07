@@ -111,7 +111,7 @@ The first `M` entries of the state are the angles, the last `M` are the momenta.
 """
 function coupledstandardmaps end
 using SparseArrays
-function coupledstandardmaps(M::Int, u0 = 0.001rand(2M);
+function coupledstandardmaps(M::Int = 2, u0 = 0.001rand(2M);
     ks = ones(M), Γ = 1.0)
 
     SV = SVector{M, Int}
@@ -130,7 +130,7 @@ function coupledstandardmaps(M::Int, u0 = 0.001rand(2M);
     sparseJ = sparse(J)
     p = vcat(ks, Γ)
     csm(sparseJ, u0, p, 0)
-    return DeterministicIteratedMap(csm, u0, p, csm, sparseJ)
+    return DeterministicIteratedMap(csm, u0, p)
 end
 struct CoupledStandardMaps{N}
     idxs::SVector{N, Int}
@@ -148,7 +148,7 @@ function (f::CoupledStandardMaps{N})(xnew::AbstractVector, x, p, n) where {N}
 
         xnew[i] = mod2pi(x[i] + xnew[i+N])
     end
-    return xnew
+    return nothing
 end
 function (f::CoupledStandardMaps{M})(
     J::AbstractMatrix, x, p, n) where {M}
@@ -250,23 +250,23 @@ x_n(1 + |2x_n|^{z-1}), & \\quad |x_n| \\le 0.5 \\\\
 [2] : Meyer et al., New. J. Phys **20** (2019)
 """
 function pomeau_manneville(u0 = 0.2, z = 2.5)
-    return DeterministicIteratedMap(pm_rule, u0, [z], pm_jac)
+    return DeterministicIteratedMap(pm_rule, SVector{1}(u0), [z])
 end
 function pm_rule(x, p, n)
-    if x < -0.5
-        -4x - 3
-    elseif -0.5 ≤ x ≤ 0.5
-        @inbounds x*(1 + abs(2x)^(p[1]-1))
+    if x[1] < -0.5
+        SVector{1}(-4x[1] - 3)
+    elseif -0.5 ≤ x[1] ≤ 0.5
+        @inbounds SVector{1}(x[1]*(1 + abs(2x[1])^(p[1]-1)))
     else
-        -4x + 3
+        SVector{1}(-4x[1] + 3)
     end
 end
 function pomeau_manneville_jacob(x, p, n)
-    if x < -0.5
+    if x[1] < -0.5
         -4.0
-    elseif -0.5 ≤ x ≤ 0.5
+    elseif -0.5 ≤ x[1] ≤ 0.5
         @inbounds z = p[1]
-        0.5(x^2 * 2^z * (z-1)*abs(x)^(z-3) + 2^z * abs(x)^(z-1) + 2)
+        0.5(x[1]^2 * 2^z * (z-1)*abs(x[1])^(z-3) + 2^z * abs(x[1])^(z-1) + 2)
     else
         -4.0
     end
@@ -288,13 +288,13 @@ function's documentation string.
 [^Manneville1980]: Manneville, P. (1980). Intermittency, self-similarity and 1/f spectrum in dissipative dynamical systems. [Journal de Physique, 41(11), 1235–1243](https://doi.org/10.1051/jphys:0198000410110123500)
 """
 function manneville_simple(x0=0.4; ε = 0.1)
-    return DeterministicIteratedMap(manneville_f, x0, [ε], manneville_j)
+    return DeterministicIteratedMap(manneville_f, SVector{1}(x0), [ε])
 end
 
 function manneville_f(x, p, t)
     e = p[1]
-    y = (1+e)*x + (1-e)*x*x
-    return y%1
+    y = (1+e)*x[1] + (1-e)*x[1]*x[1]
+    return SVector{1}(y%1)
 end
 manneville_simple_jacob(x, p, n) = (1+p[1]) + (1-p[1])*2x
 
@@ -411,15 +411,15 @@ function tentmap(u0 = 0.25, μ = 2.0)
 end
 function tentmap_rule(x, p, n)
     μ = p[1]
-    if x < 0.5
-        μ*x
+    if x[1] < 0.5
+        SVector{1}(μ*x[1])
     else
-        μ*(1 - x)
+        SVector{1}(μ*(1 - x[1]))
     end
 end
 function tentmap_jacob(x, p, n)
     μ = p[1]
-    if x < -0.5
+    if x[1] < -0.5
         μ
     else
         -μ
@@ -440,14 +440,14 @@ The parameter β controls the dynamics of the map. Its Lyapunov exponent can be 
 At β=2, it becomes the dyadic transformation, also known as the bit shift map, the 2x mod 1 map, the Bernoulli map or the sawtooth map. The typical trajectory for this case is chaotic, though there are countably infinite periodic orbits [^Ott2002].
 """
 function betatransformationmap(u0 = 0.25; β=2.0)
-    return DeterministicIteratedMap(betatransformation_rule, u0, [β])
+    return DeterministicIteratedMap(betatransformation_rule, SVector{1}(u0), [β])
 end
 function betatransformation_rule(x, p, n)
     @inbounds β = p[1]
-    if 0 ≤ x < 1/β
-        β*x
+    if 0 ≤ x[1] < 1/β
+        SVector{1}(β*x[1])
     else
-        β*x - 1
+        SVector{1}(β*x - 1)
     end
 end
 function betatransformation_jacob(x, p, n)
@@ -520,9 +520,9 @@ end
     a,b,c,d = p
     x,y = u
     t = c - d/(1 + x^2 + y^2)
-    aux = 2*d/(1+x^2+y^2)      
-    return SMatrix{2,2}(b*(cos(t)-x^2*sin(t)*aux -x*y*cos(t)*aux), b*(sin(t) +x^2*cos(t)*aux)-x*y*sin(t)*aux, 
-    b*(-sin(t) -x*y*sin(t)*aux -y^2*cos(t)*aux), b*(cos(t) -x*y*cos(t)*aux -y^2*sin(t)*aux))                
+    aux = 2*d/(1+x^2+y^2)
+    return SMatrix{2,2}(b*(cos(t)-x^2*sin(t)*aux -x*y*cos(t)*aux), b*(sin(t) +x^2*cos(t)*aux)-x*y*sin(t)*aux,
+    b*(-sin(t) -x*y*sin(t)*aux -y^2*cos(t)*aux), b*(cos(t) -x*y*cos(t)*aux -y^2*sin(t)*aux))
 end
 
 
