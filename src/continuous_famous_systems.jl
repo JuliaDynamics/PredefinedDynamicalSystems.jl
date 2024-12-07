@@ -85,7 +85,7 @@ end
     return SVector{3}(du1, du2, du3)
 end
 function chua_jacob(u, p, t)
-    return SMatrix{3,3}(-p[1]*(1 + chua_element_derivative(u[1], p[3], p[4])),1.0,0.0,p[1],-1.0,-p[2],0.0,1.0,0.0)    
+    return SMatrix{3,3}(-p[1]*(1 + chua_element_derivative(u[1], p[3], p[4])),1.0,0.0,p[1],-1.0,-p[2],0.0,1.0,0.0)
 end
 # Helper functions for Chua's circuit.
 function chua_element(x, m0, m1)
@@ -130,7 +130,7 @@ end
     return SVector{3}(du1, du2, du3)
 end
 function roessler_jacob(u, p, t)
-    return SMatrix{3,3}(0.0,1.0,u[3],-1.0,p[1],0.0,-1.0,0.0,u[1]-p[3])          
+    return SMatrix{3,3}(0.0,1.0,u[3],-1.0,p[1],0.0,-1.0,0.0,u[1]-p[3])
 end
 
 """
@@ -170,7 +170,7 @@ end
     sin_ϕ = sin(φ); cos_ϕ = cos(φ)
     sin_θ₂ = sin(u[3]); sin_θ₁ = sin(u[1])
     Δ = (p[4] + p[5]) - p[5] * cos_ϕ^2
-    
+
     du1 = u[2]
     du2 = (p[5] * (cos_ϕ * (p[2] * u[2]^2 * sin_ϕ + p[1] * sin_θ₂) +
             p[3] * u[4]^2 * sin_ϕ) -
@@ -295,7 +295,7 @@ end
 `N` is the chain length, `F` the forcing. Jacobian is created automatically.
 (parameter container only contains `F`)
 """
-function lorenz96(N::Int, u0 = range(0; length = N, step = 0.1); F=0.01)
+function lorenz96(N::Int = 4, u0 = range(0; length = N, step = 0.1); F=0.01)
     @assert N ≥ 4 "`N` must be at least 4"
     lor96 = Lorenz96{N}() # create struct
     return CoupledODEs(lor96, u0, [F])
@@ -398,7 +398,7 @@ function gissinger_rule(u, p, t)
     return SVector{3}(du1, du2, du3)
 end
 function gissinger_jacob(u, p, t)
-    μ, ν, Γ = p            
+    μ, ν, Γ = p
    return SMatrix{3,3}(μ,u[3],u[2],-u[3],-ν,u[1],-u[2],u[1],-1)
 end
 
@@ -433,7 +433,7 @@ function rikitake_jacob(u, p, t)
     μ, α = p
     x,y,z = u
 
-    return SMatrix{3,3}(-μ,z-α,-y,z,-μ,-x,y,x,0)                   
+    return SMatrix{3,3}(-μ,z-α,-y,z,-μ,-x,y,x,0)
 end
 
 """
@@ -472,8 +472,8 @@ function nosehoover_rule(u, p, t)
 end
 function nosehoover_jacob(u, p, t)
     x,y,z = u
-                     
-	return SMatrix{3,3}(0,-1,0,1,z,-2y,0,y,0)                     
+
+	return SMatrix{3,3}(0,-1,0,1,z,-2y,0,y,0)
 end
 
 """
@@ -613,7 +613,7 @@ end
 function ueda_jacob(u, p, t)
     x,y = u
     k, B = p
-    return SMatrix{2,2}(0,-3*x^2,1,-k)               
+    return SMatrix{2,2}(0,-3*x^2,1,-k)
 end
 
 
@@ -778,9 +778,9 @@ function stommel_thermohaline_jacob(x, p, t)
     η1, η2, η3 = p
     q = abs(T-S)
     if T ≥ S
-		return SMatrix{2,2}((-1 - 2T + S), -S,T,(-η3 - T + 2S))                     
+		return SMatrix{2,2}((-1 - 2T + S), -S,T,(-η3 - T + 2S))
     else
-        return SMatrix{2,2}((-1 + 2T - S), S,-T,(-η3 + T - 2S))                  
+        return SMatrix{2,2}((-1 + 2T - S), S,-T,(-η3 + T - 2S))
     end
 end
 
@@ -823,7 +823,7 @@ end
 end
 function lorenz84_rule_jacob(u, p, t)
     F, G, a, b = p
-	x, y, z = u                     
+	x, y, z = u
 	return SMatrix{3,3}(-a,y-b*z,b*y+z,-2y,x-1,b*x,-2z,-b*x,x-1)
 end
 
@@ -867,7 +867,7 @@ end
     return SVector{3}(dx, dy, dz)
 end
 function lorenzdl_rule_jacob(u, p, t)
-    x, y, z = u                      
+    x, y, z = u
     return SMatrix{3,3}(-1,-z,y,1,0,x,0,-x,0)
 end
 
@@ -909,7 +909,7 @@ end
 
 
 """
-    kuramoto(D = 20, u0 = range(0, 2π; length = D);
+    kuramoto(D = 25, u0 = range(0, 2π; length = D);
         K = 0.3, ω = range(-1, 1; length = D)
     )
 The Kuramoto model[^Kuramoto1975] of `D` coupled oscillators with equation
@@ -977,7 +977,7 @@ end
 function sprott_dissipative_conservative_jacob(u, p, t)
     a, b, c = p
     x, y, z = u
-                    
+
     return SMatrix{3,3}(a*y + z,-4x,c - 2x,1 + a*x,b*z,-2y,x,b*y,0)
 end
 
@@ -1188,7 +1188,7 @@ function hindmarshrose_rule(u, p, t)
 end
 function hindmarshrose_jacob(u, p, t)
     @inbounds begin
-        a,b,c,d,r,s, xr, I = p        
+        a,b,c,d,r,s, xr, I = p
         return SMatrix{3,3}(-3*a*u[1]^2 + 2*b*u[1],-2*d*u[1],r*s,1,-1,0,-1,0,-r)
     end
 end
@@ -1288,7 +1288,7 @@ end
 function stuartlandau_jacob(u, p, t)
     @inbounds begin
         μ, ω, b = p
-            
+
         return SMatrix{2,2}(μ - 3*u[1]^2 -u[2]^2 -2*b*u[1]*u[2],-2*u[1]*u[2] +ω +b*u[2]^2 +3*b*u[1]^2,
         -2*u[1]*u[2] -ω -b*u[1]^2 -3*b*u[2]^2,μ -u[1]^2 -3*u[2]^2 +2*b*u[1]*u[2])
     end
