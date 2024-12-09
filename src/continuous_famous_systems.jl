@@ -1196,7 +1196,7 @@ end
 """
 ```julia
 hindmarshrose_two_coupled(u0=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
-a = 1.0, b = 3.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
+a = 1.0, b = 3.0, c=1.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
 k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
 ```
 ```math
@@ -1214,7 +1214,7 @@ The default parameter values are taken from article "Dragon-king-like extreme ev
 coupled bursting neurons", DOI:https://doi.org/10.1103/PhysRevE.97.062311.
 """
 function hindmarshrose_two_coupled(u0=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
-			a = 1.0, b = 3.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
+			a = 1.0, b = 3.0, c=1.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
 			k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
 	return CoupledODEs(hindmarshrose_coupled_rule, u0, [a, b, c, d, r, s, xr, I, k1, k2, k_el, xv])
 end
@@ -1225,11 +1225,11 @@ function hindmarshrose_coupled_rule(u, p, t)
     a, b, c, d, r, s, xr, I, k1, k2, k_el, xv = p
     x1, y1, z1, x2, y2, z2 = u
 
-    du1 = y1 + b * x1 ^ 2 - a * x1 ^3 - z1 + I - k1 * ( x1 - vs ) * sigma(x2) + el_link * ( x2 - x1 )
+    du1 = y1 + b * x1 ^ 2 - a * x1 ^3 - z1 + I - k1 * ( x1 - xv ) * sigma(x2) + k_el * ( x2 - x1 )
     du2 = c - d * x1 ^2 - y1
     du3 = r * ( s * ( x1 - xr ) - z1 )
 
-    du4 = y2 + b * x2 ^ 2 - a * x2 ^3 - z2 + I - k2 * ( x2 - vs ) * sigma(x1) + el_link * ( x1 - x2 )
+    du4 = y2 + b * x2 ^ 2 - a * x2 ^3 - z2 + I - k2 * ( x2 - xv ) * sigma(x1) + k_el * ( x1 - x2 )
     du5 = c - d * x2 ^2 - y2
     du6 = r * ( s * ( x2 - xr ) - z2 )
     return SVector(du1, du2, du3, du4, du5, du6)
