@@ -85,7 +85,7 @@ end
     return SVector{3}(du1, du2, du3)
 end
 function chua_jacob(u, p, t)
-    return SMatrix{3,3}(-p[1]*(1 + chua_element_derivative(u[1], p[3], p[4])),1.0,0.0,p[1],-1.0,-p[2],0.0,1.0,0.0)    
+    return SMatrix{3,3}(-p[1]*(1 + chua_element_derivative(u[1], p[3], p[4])),1.0,0.0,p[1],-1.0,-p[2],0.0,1.0,0.0)
 end
 # Helper functions for Chua's circuit.
 function chua_element(x, m0, m1)
@@ -130,7 +130,7 @@ end
     return SVector{3}(du1, du2, du3)
 end
 function roessler_jacob(u, p, t)
-    return SMatrix{3,3}(0.0,1.0,u[3],-1.0,p[1],0.0,-1.0,0.0,u[1]-p[3])          
+    return SMatrix{3,3}(0.0,1.0,u[3],-1.0,p[1],0.0,-1.0,0.0,u[1]-p[3])
 end
 
 """
@@ -170,7 +170,7 @@ end
     sin_ϕ = sin(φ); cos_ϕ = cos(φ)
     sin_θ₂ = sin(u[3]); sin_θ₁ = sin(u[1])
     Δ = (p[4] + p[5]) - p[5] * cos_ϕ^2
-    
+
     du1 = u[2]
     du2 = (p[5] * (cos_ϕ * (p[2] * u[2]^2 * sin_ϕ + p[1] * sin_θ₂) +
             p[3] * u[4]^2 * sin_ϕ) -
@@ -295,7 +295,7 @@ end
 `N` is the chain length, `F` the forcing. Jacobian is created automatically.
 (parameter container only contains `F`)
 """
-function lorenz96(N::Int, u0 = range(0; length = N, step = 0.1); F=0.01)
+function lorenz96(N::Int = 4, u0 = range(0; length = N, step = 0.1); F=0.01)
     @assert N ≥ 4 "`N` must be at least 4"
     lor96 = Lorenz96{N}() # create struct
     return CoupledODEs(lor96, u0, [F])
@@ -398,7 +398,7 @@ function gissinger_rule(u, p, t)
     return SVector{3}(du1, du2, du3)
 end
 function gissinger_jacob(u, p, t)
-    μ, ν, Γ = p            
+    μ, ν, Γ = p
    return SMatrix{3,3}(μ,u[3],u[2],-u[3],-ν,u[1],-u[2],u[1],-1)
 end
 
@@ -433,7 +433,7 @@ function rikitake_jacob(u, p, t)
     μ, α = p
     x,y,z = u
 
-    return SMatrix{3,3}(-μ,z-α,-y,z,-μ,-x,y,x,0)                   
+    return SMatrix{3,3}(-μ,z-α,-y,z,-μ,-x,y,x,0)
 end
 
 """
@@ -472,8 +472,8 @@ function nosehoover_rule(u, p, t)
 end
 function nosehoover_jacob(u, p, t)
     x,y,z = u
-                     
-	return SMatrix{3,3}(0,-1,0,1,z,-2y,0,y,0)                     
+
+	return SMatrix{3,3}(0,-1,0,1,z,-2y,0,y,0)
 end
 
 """
@@ -613,7 +613,7 @@ end
 function ueda_jacob(u, p, t)
     x,y = u
     k, B = p
-    return SMatrix{2,2}(0,-3*x^2,1,-k)               
+    return SMatrix{2,2}(0,-3*x^2,1,-k)
 end
 
 
@@ -778,9 +778,9 @@ function stommel_thermohaline_jacob(x, p, t)
     η1, η2, η3 = p
     q = abs(T-S)
     if T ≥ S
-		return SMatrix{2,2}((-1 - 2T + S), -S,T,(-η3 - T + 2S))                     
+		return SMatrix{2,2}((-1 - 2T + S), -S,T,(-η3 - T + 2S))
     else
-        return SMatrix{2,2}((-1 + 2T - S), S,-T,(-η3 + T - 2S))                  
+        return SMatrix{2,2}((-1 + 2T - S), S,-T,(-η3 + T - 2S))
     end
 end
 
@@ -823,7 +823,7 @@ end
 end
 function lorenz84_rule_jacob(u, p, t)
     F, G, a, b = p
-	x, y, z = u                     
+	x, y, z = u
 	return SMatrix{3,3}(-a,y-b*z,b*y+z,-2y,x-1,b*x,-2z,-b*x,x-1)
 end
 
@@ -867,7 +867,7 @@ end
     return SVector{3}(dx, dy, dz)
 end
 function lorenzdl_rule_jacob(u, p, t)
-    x, y, z = u                      
+    x, y, z = u
     return SMatrix{3,3}(-1,-z,y,1,0,x,0,-x,0)
 end
 
@@ -909,7 +909,7 @@ end
 
 
 """
-    kuramoto(D = 20, u0 = range(0, 2π; length = D);
+    kuramoto(D = 25, u0 = range(0, 2π; length = D);
         K = 0.3, ω = range(-1, 1; length = D)
     )
 The Kuramoto model[^Kuramoto1975] of `D` coupled oscillators with equation
@@ -977,7 +977,7 @@ end
 function sprott_dissipative_conservative_jacob(u, p, t)
     a, b, c = p
     x, y, z = u
-                    
+
     return SMatrix{3,3}(a*y + z,-4x,c - 2x,1 + a*x,b*z,-2y,x,b*y,0)
 end
 
@@ -1188,7 +1188,7 @@ function hindmarshrose_rule(u, p, t)
 end
 function hindmarshrose_jacob(u, p, t)
     @inbounds begin
-        a,b,c,d,r,s, xr, I = p        
+        a,b,c,d,r,s, xr, I = p
         return SMatrix{3,3}(-3*a*u[1]^2 + 2*b*u[1],-2*d*u[1],r*s,1,-1,0,-1,0,-r)
     end
 end
@@ -1196,7 +1196,7 @@ end
 """
 ```julia
 hindmarshrose_two_coupled(u0=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
-a = 1.0, b = 3.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
+a = 1.0, b = 3.0, c=1.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
 k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
 ```
 ```math
@@ -1214,7 +1214,7 @@ The default parameter values are taken from article "Dragon-king-like extreme ev
 coupled bursting neurons", DOI:https://doi.org/10.1103/PhysRevE.97.062311.
 """
 function hindmarshrose_two_coupled(u0=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
-			a = 1.0, b = 3.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
+			a = 1.0, b = 3.0, c=1.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
 			k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
 	return CoupledODEs(hindmarshrose_coupled_rule, u0, [a, b, c, d, r, s, xr, I, k1, k2, k_el, xv])
 end
@@ -1225,11 +1225,11 @@ function hindmarshrose_coupled_rule(u, p, t)
     a, b, c, d, r, s, xr, I, k1, k2, k_el, xv = p
     x1, y1, z1, x2, y2, z2 = u
 
-    du1 = y1 + b * x1 ^ 2 - a * x1 ^3 - z1 + I - k1 * ( x1 - vs ) * sigma(x2) + el_link * ( x2 - x1 )
+    du1 = y1 + b * x1 ^ 2 - a * x1 ^3 - z1 + I - k1 * ( x1 - xv ) * sigma(x2) + k_el * ( x2 - x1 )
     du2 = c - d * x1 ^2 - y1
     du3 = r * ( s * ( x1 - xr ) - z1 )
 
-    du4 = y2 + b * x2 ^ 2 - a * x2 ^3 - z2 + I - k2 * ( x2 - vs ) * sigma(x1) + el_link * ( x1 - x2 )
+    du4 = y2 + b * x2 ^ 2 - a * x2 ^3 - z2 + I - k2 * ( x2 - xv ) * sigma(x1) + k_el * ( x1 - x2 )
     du5 = c - d * x2 ^2 - y2
     du6 = r * ( s * ( x2 - xr ) - z2 )
     return SVector(du1, du2, du3, du4, du5, du6)
@@ -1288,7 +1288,7 @@ end
 function stuartlandau_jacob(u, p, t)
     @inbounds begin
         μ, ω, b = p
-            
+
         return SMatrix{2,2}(μ - 3*u[1]^2 -u[2]^2 -2*b*u[1]*u[2],-2*u[1]*u[2] +ω +b*u[2]^2 +3*b*u[1]^2,
         -2*u[1]*u[2] -ω -b*u[1]^2 -3*b*u[2]^2,μ -u[1]^2 -3*u[2]^2 +2*b*u[1]*u[2])
     end
