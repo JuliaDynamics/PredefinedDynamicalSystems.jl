@@ -548,3 +548,35 @@ function ulam_rule(dx, x, p, t)
         dx[i] = ulam_rule_f(ε*x[mod1(i-1, N)] + (1-ε)*x[i])
     end
 end
+
+
+"""
+```julia
+zaslavskiimap(u0=[0.1, 0.2]; ϵ=5.0, ν=0.2, r = 2.0)
+```
+```math
+\\\\begin{aligned}
+x_{n+1}=[x_n+\\nu(1+\\mu y_n)+\\epsilon\\nu\\mu\\cos(2\\pi x_n)]\\, (\\textrm{mod}\\,1) \\\\
+y_{n+1}=e^{-r}(y_n+\\epsilon\\cos(2\\pi x_n))
+\\\\end{aligned}
+```
+A two dimensional discrete chaotic map, claimed incredibly wrongly as
+"the simplest case of a strange attractor" by [^Zaslavskii1978].
+It doesn't even come close to the simplest case, which is likely the logistic map.
+
+The Ikeda map was proposed by Ikeda as a model to explain the propagation of light into a ring cavity [^Skiadas2008]. It generates a variety of nice-looking, interesting attractors.
+The default parameters are chosen to give a unique chaotic attractor. A double attractor can be obtained with parameters `[a,b,c,d] = [6, 0.9, 3.1, 6]`, and a triple attractor can be obtained with `[a,b,c,d] = [6, 9, 2.22, 6]` [^Skiadas2008].
+
+[^Zaslavskii1978] : "The Simplest case of a strange attractor". Phys. Lett. A. 69 (3): 145–147. doi:10.1016/0375-9601(78)90195-0.
+"""
+function zaslavskiimap(u0=[0.1, 0.2]; ϵ=5.0, ν=0.2, r = 2.0)
+    return DeterministicIteratedMap(zaslavskiimap, u0, [ϵ, ν, r])
+end
+@inbounds function zaslavskiimap_rule(u, p, n)
+    ϵ, ν, r = p
+    μ = (1 - exp(-r))/r
+    x, y = u
+    dx = mod(x + ν*(1 + μ*y) + ϵ*ν*μ*cos2pi(x), 1.0)
+    dy = exp(-r)*(y + ϵ*cos2pi(x))
+    return SVector{2}(dx, dy)
+end
