@@ -1201,15 +1201,15 @@ k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
 ```
 ```math
 \\begin{aligned}
-\\dot x_{i} = y_{i} + bx^{2}_{i} - ax^{3}_{i} - z_{i} + I - k_{i}(x_{i} - v_{s})\\Gamma(x_{j}) + k(x_{j} - x_{i})\\\\
-\\dot y_{i} = c - d x^{2}_{i} - y_{i}\\\\
-\\dot z_{i} = r[s(x_{i} - x_{R}) - z_{i}]\\\\
-\\i,j=1,2 (i\\neq j).\\\\
+\\dot x_{i} &= y_{i} + bx^{2}_{i} - ax^{3}_{i} - z_{i} + I - k_{i}(x_{i} - v_{s})\\Gamma(x_{j}) + k(x_{j} - x_{i})\\\\
+\\dot y_{i} &= c - d x^{2}_{i} - y_{i}\\\\
+\\dot z_{i} &= r[s(x_{i} - x_{R}) - z_{i}]\\\\
 \\end{aligned}
 ```
+where ``i,j=1,2 (i\\neq j)`` denote two oscillators.
 
 The two coupled Hindmarsh Rose element by chemical and electrical synapse.
-it is modelling the dynamics of a neuron's membrane potential.
+It is modelling the dynamics of a neuron's membrane potential.
 The default parameter values are taken from article "Dragon-king-like extreme events in
 coupled bursting neurons", DOI:https://doi.org/10.1103/PhysRevE.97.062311.
 """
