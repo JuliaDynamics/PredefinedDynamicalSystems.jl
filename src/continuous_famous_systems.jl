@@ -1366,14 +1366,15 @@ Pacific barnacle [^MorrisLecar1981]. Its evolution is given by:
 ```math
 \\begin{aligned}
 \\dot{V} &= -g_{Ca} M(V) (V - V_{Ca}) - g_K N (V - V_K) - g_L (V - V_L) + I \\\\
-\\dot{N} &= (-N + G(V)) / \tau \\\\
+\\dot{N} &= (-N + G(V)) / \\tau \\\\
 \\end{aligned}
 ```
 with
 ```math
 \\begin{aligned}
-M(V) = 0.5 (1 + \\tanh((x-V1)/V2)) \\\\
-G(V) = 0.5 (1 + \\tanh((x-V3)/V4)) \\\\
+M(V) &= 0.5 (1 + \\tanh((x-V1)/V2)) \\\\
+G(V) &= 0.5 (1 + \\tanh((x-V3)/V4)) \\\\
+\\end{aligned}
 ```
 
 [^IzhikevichBook]:
