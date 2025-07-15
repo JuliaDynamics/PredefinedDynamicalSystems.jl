@@ -74,6 +74,17 @@ end
         :hyper_cai,
         :hyper_lu,
         :hyper_pang,
+        :brusselator,
+        :vanderpol,
+        :rabinovich_fabrikant,
+        :duffing,
+        :fitzhugh_nagumo,
+        :aizawa,
+        :three_scroll,
+        :henon_heiles,
+        :dadras,
+        :chen,
+        :fourwing
     ]
     for system in systems
         @test @eval PredefinedDynamicalSystems.$system() isa CoupledODEs

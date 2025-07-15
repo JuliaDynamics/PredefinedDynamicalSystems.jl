@@ -1,0 +1,6 @@
+{
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ],
+    "julia.environmentPath": "c:\\Users\\green\\OneDrive\\Documents\\2023-2027\\Summer 2025\\Eqn Discovery Project\\PredefinedDynamicalSystems.jl"
+}

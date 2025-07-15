@@ -1,6 +1,6 @@
 """
 ```julia
-lorenz(u0=[0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3) -> ds
+lorenz(u0 = [0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3)
 ```
 ```math
 \\begin{aligned}
@@ -99,7 +99,7 @@ end
 
 """
 ```julia
-roessler(u0=[1, -2, 0.1]; a = 0.2, b = 0.2, c = 5.7)
+roessler(u0 = [1, -2, 0.1]; a = 0.2, b = 0.2, c = 5.7)
 ```
 ```math
 \\begin{aligned}
@@ -134,11 +134,11 @@ function roessler_jacob(u, p, t)
 end
 
 """
-    double_pendulum(u0 = [π/2, 0, 0, 0.5];
-                    G=10.0, L1 = 1.0, L2 = 1.0, M1 = 1.0, M2 = 1.0)
-Famous chaotic double pendulum system (also used for our logo!). Keywords are gravity (`G`),
-lengths of each rod (`L1` and `L2`) and mass of each ball (`M1` and `M2`).
-Everything is assumed in SI units.
+```julia
+double_pendulum(u0 = [π/2, 0, 0, 0.5];
+    G = 10.0, L1 = 1.0, L2 = 1.0, M1 = 1.0, M2 = 1.0)
+```
+
 
 The variables order is ``[θ₁, ω₁, θ₂, ω₂]`` and they satisfy:
 
@@ -153,6 +153,10 @@ The variables order is ``[θ₁, ω₁, θ₂, ω₂]`` and they satisfy:
 \\end{aligned}
 ```
 where ``φ = θ₂-θ₁`` and ``Δ = (M₁ + M₂) - M₂ \\cos² φ``.
+
+Famous chaotic double pendulum system (also used for our logo!). Keywords are gravity (`G`),
+lengths of each rod (`L1` and `L2`) and mass of each ball (`M1` and `M2`).
+Everything is assumed in SI units.
 
 Jacobian is created automatically (thus methods that use the Jacobian will be slower)!
 
@@ -183,7 +187,9 @@ end
 end
 
 """
-    henonheiles(u0=[0, -0.25, 0.42081,0])
+```julia
+henonheiles(u0 = [0, -0.25, 0.42081, 0])
+```
 ```math
 \\begin{aligned}
 \\dot{x} &= p_x \\\\
@@ -238,8 +244,12 @@ end
 
 
 """
-    qbh([u0]; A=1.0, B=0.55, D=0.4)
-
+```julia
+qbh(u0 = [0.0, -2.5830294658973876, 1.3873470962626937, -4.743416490252585]; 
+    A = 1.0, 
+    B = 0.55, 
+    D = 0.4)
+```
 A conservative dynamical system with rule
 ```math
 \\begin{aligned}
@@ -286,8 +296,9 @@ end
 end
 
 """
-    lorenz96(N::Int, u0 = rand(M); F=0.01)
-
+```julia
+lorenz96(N::Int, u0 = rand(M); F=0.01)
+```
 ```math
 \\frac{dx_i}{dt} = (x_{i+1}-x_{i-2})x_{i-1} - x_i + F
 ```
@@ -313,10 +324,10 @@ struct Lorenz96{N} end # Structure for size type
     return nothing
 end
 
-
-
 """
-    duffing(u0 = [0.1, 0.25]; ω = 2.2, f = 27.0, d = 0.2, β = 1)
+```julia
+duffing(u0 = [0.1, 0.25]; ω = 2.2, f = 27.0, d = 0.2, β = 1)
+```
 The (forced) duffing oscillator, that satisfies the equation
 ```math
 \\ddot{x} + d \\dot{x} + β x + x^3 = f \\cos(\\omega t)
@@ -477,7 +488,8 @@ function nosehoover_jacob(u, p, t)
 end
 
 """
-    antidots([u]; B = 1.0, d0 = 0.3, c = 0.2)
+antidots(u0 = [0.5, 0.5, 0.25, 0.25]; d0 = 0.3, c = 0.2, B = 1.0)
+
 An antidot "superlattice" is a Hamiltonian system that corresponds to a
 smoothened periodic Sinai billiard with disk diameter `d0` and smooth
 factor `c` [^Datseris2019].
@@ -486,6 +498,7 @@ This version is the two dimensional
 classical form of the system, with quadratic dynamical rule and
 a perpendicular magnetic field. Notice that the dynamical rule
 is with respect to the velocity instead of momentum, i.e.:
+
 ```math
 \\begin{aligned}
 \\dot{x} &= v_x \\\\
@@ -642,8 +655,15 @@ function (m::MagneticPendulum)(u, p, t)
 end
 
 """
-    magnetic_pendulum(u=[0.7,0.7,0,0]; d=0.3, α=0.2, ω=0.5, N=3, γs=fill(1.0,N))
-
+```julia
+magnetic_pendulum(u0 = [0.7, 0.7, 0,0]; 
+    γ = 1.0, 
+    d = 0.3, 
+    α = 0.2, 
+    ω = 0.5, 
+    N = 3, 
+    γs = fill(1.0, N) )
+```
 Create a pangetic pendulum with `N` magnetics, equally distributed along the unit circle,
 with dynamical rule
 ```math
@@ -664,7 +684,9 @@ function magnetic_pendulum(u = [sincos(0.12553*2π)..., 0, 0];
 end
 
 """
-    fitzhugh_nagumo(u = 0.5ones(2); a=3.0, b=0.2, ε=0.01, I=0.0)
+```julia
+fitzhugh_nagumo(u = 0.5ones(2); a=3.0, b=0.2, ε=0.01, I=0.0)
+```
 Famous excitable system which emulates the firing of a neuron, with rule
 ```math
 \\begin{aligned}
@@ -685,7 +707,9 @@ function fitzhugh_nagumo_rule(x, p, t)
 end
 
 """
-    more_chaos_example(u = rand(3))
+```julia
+more_chaos_example(u = rand(3))
+```
 A three dimensional chaotic system introduced in [^Sprott2020] with rule
 ```math
 \\begin{aligned}
@@ -711,7 +735,9 @@ function more_chaos_rule(u, p, t)
 end
 
 """
-    thomas_cyclical(u0 = [1.0, 0, 0]; b = 0.2)
+```julia
+thomas_cyclical(u0 = [1.0, 0, 0]; b = 0.2)
+```
 ```math
 \\begin{aligned}
 \\dot{x} &= \\sin(y) - bx\\\\
@@ -750,7 +776,9 @@ function thomas_jacob(u, p, t)
 end
 
 """
-    stommel_thermohaline(u = [0.3, 0.2]; η1 = 3.0, η2 = 1, η3 = 0.3)
+```julia
+stommel_thermohaline(u = [0.3, 0.2]; η1 = 3.0, η2 = 1, η3 = 0.3)
+```
 Stommel's box model for Atlantic thermohaline circulation
 ```math
 \\begin{aligned}
@@ -785,13 +813,15 @@ function stommel_thermohaline_jacob(x, p, t)
 end
 
 """
-    lorenz84(u = [0.1, 0.1, 0.1]; F=6.846, G=1.287, a=0.25, b=4.0)
+```julia
+lorenz84(u0 = [0.1, 0.1, 0.1]; F = 6.846, G = 1.287, a = 0.25, b = 4.0)
+```
 Lorenz-84's low order atmospheric general circulation model
 ```math
 \\begin{aligned}
-\\dot x = − y^2 − z^2 − ax + aF, \\\\
-\\dot y = xy − y − bxz + G, \\\\
-\\dot z = bxy + xz − z. \\\\
+\\dot{x} = − y^2 − z^2 − ax + aF, \\\\
+\\dot{y} = xy − y − bxz + G, \\\\
+\\dot{z} = bxy + xz − z. \\\\
 \\end{aligned}
 ```
 
@@ -799,7 +829,7 @@ This system has interesting multistability property in the phase space. For the 
 parameter set we have four coexisting attractors that gives birth to interesting fractalized
 phase space as shown in [^Freire2008]. One can see this by doing:
 
-```
+```julia
 ds = Systems.lorenz84(rand(3))
 xg = yg = range(-1.0, 2.0; length=300)
 zg = range(-1.5, 1.5; length=30)
@@ -830,7 +860,9 @@ end
 
 
 """
-    lorenzdl(u = [0.1, 0.1, 0.1]; R=4.7)
+```julia
+lorenzdl(u = [0.1, 0.1, 0.1]; R = 4.7)
+```
 Diffusionless Lorenz system: it is *probably* the simplest rotationnaly invariant
 chaotic flow.
 ```math
@@ -872,9 +904,16 @@ function lorenzdl_rule_jacob(u, p, t)
 end
 
 """
-    coupled_roessler(u0=[1, -2, 0, 0.11, 0.2, 0.1];
-    ω1 = 0.18, ω2 = 0.22, a = 0.2, b = 0.2, c = 5.7, k1 = 0.115, k2 = 0.0)
-
+``julia
+coupled_roessler(u0 = [1, -2, 0, 0.11, 0.2, 0.1];
+    ω1 = 0.18, 
+    ω2 = 0.22, 
+    a = 0.2, 
+    b = 0.2, 
+    c = 5.7, 
+    k1 = 0.115, 
+    k2 = 0.0)
+````
 Two coupled Rössler oscillators, used frequently in the study of chaotic synchronization.
 The parameter container has the parameters in the same order as stated in this
 function's documentation string.
@@ -909,14 +948,14 @@ end
 
 
 """
-    kuramoto(D = 25, u0 = range(0, 2π; length = D);
-        K = 0.3, ω = range(-1, 1; length = D)
-    )
+```julia
+kuramoto(D = 25, u0 = range(0, 2π; length = D);
+        K = 0.3, ω = range(-1, 1; length = D))
+```
 The Kuramoto model[^Kuramoto1975] of `D` coupled oscillators with equation
 ```math
 \\dot{\\phi}_i = \\omega_i + \\frac{K}{D}\\sum_{j=1}^{D} \\sin(\\phi_j - \\phi_i)
 ```
-
 [^Kuramoto1975]:
     Kuramoto, Yoshiki.
     International Symposium on Mathematical Problems in Theoretical Physics. 39.
@@ -944,7 +983,9 @@ mutable struct KuramotoParams{T<:Real, V<:AbstractVector{T}}
 end
 
 """
-    sprott_dissipative_conservative(u0 = [1.0, 0, 0]; a = 2, b = 1, c = 1)
+```julia
+sprott_dissipative_conservative(u0 = [1.0, 0, 0]; a = 2, b = 1, c = 1)
+```
 An interesting system due to Sprott[^Sprott2014b] where some initial conditios
 such as `[1.0, 0, 0]` lead to quasi periodic motion on a 2-torus, while for
 `[2.0, 0, 0]` motion happens on a (dissipative) chaotic attractor.
@@ -983,7 +1024,14 @@ end
 
 """
 ```julia
-hodgkinhuxley(u0=[-60.0, 0.0, 0.0, 0.0]; I = 12.0, Vna = 50.0, Vk = -77.0, Vl = -54.4, gna = 120.0,gk = 36.0, gl = 0.3) -> ds
+hodgkinhuxley(u0 = [-60.0, 0.0, 0.0, 0.0]; 
+    I = 12.0,
+    Vna = 50.0, 
+    Vk = -77.0, 
+    Vl = -54.4, 
+    gna = 120.0,
+    gk = 36.0,
+    gl = 0.3)
 ```
 ```math
 \\begin{aligned}
@@ -1050,7 +1098,7 @@ end
 
 """
 ```julia
-vanderpol(u0=[0.5, 0.0]; μ=1.5, F=1.2, T=10) -> ds
+vanderpol(u0 = [0.5, 0.0]; μ = 1.5, F = 1.2, T = 10)
 ```
 ```math
 \\begin{aligned}
@@ -1104,7 +1152,7 @@ end
 
 """
 ```julia
-lotkavolterra(u0=[10.0, 5.0]; α = 1.5, β = 1, δ=1, γ=3) -> ds
+lotkavolterra(u0 = [10.0, 5.0]; α = 1.5, β = 1, δ = 1, γ = 3)
 ```
 ```math
 \\begin{aligned}
@@ -1150,7 +1198,15 @@ end
 
 """
 ```julia
-hindmarshrose(u0=[-1.0, 0.0, 0.0]; a=1, b=3, c=1, d=5, r=0.001, s=4, xr=-8/5, I=2.0) -> ds
+hindmarshrose(u0 = [-1.0, 0.0, 0.0]; 
+    a=1, 
+    b=3, 
+    c=1, 
+    d=5, 
+    r=0.001, 
+    s=4, 
+    xr=-8/5, 
+    I=2.0)
 ```
 ```math
 \\begin{aligned}
@@ -1196,14 +1252,16 @@ end
 """
 ```julia
 hindmarshrose_two_coupled(u0=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
-a = 1.0, b = 3.0, c=1.0, d = 5.0, r = 0.001, s = 4.0, xr = -1.6, I = 4.0,
-k1 = -0.17, k2 = -0.17, k_el = 0.0, xv = 2.0)
+    a = 1.0, b = 3.0, c = 1.0, 
+    d = 5.0, r = 0.001, s = 4.0, 
+    xr = -1.6, I = 4.0, k1 = -0.17, 
+    k2 = -0.17, k_el = 0.0, xv = 2.0)
 ```
 ```math
 \\begin{aligned}
-\\dot x_{i} &= y_{i} + bx^{2}_{i} - ax^{3}_{i} - z_{i} + I - k_{i}(x_{i} - v_{s})\\Gamma(x_{j}) + k(x_{j} - x_{i})\\\\
-\\dot y_{i} &= c - d x^{2}_{i} - y_{i}\\\\
-\\dot z_{i} &= r[s(x_{i} - x_{R}) - z_{i}]\\\\
+\\dot {x_i} &= y_{i} + bx^{2}_{i} - ax^{3}_{i} - z_{i} + I - k_{i}(x_{i} - v_{s})\\Gamma(x_{j}) + k(x_{j} - x_{i})\\\\
+\\dot {y_i} &= c - d x^{2}_{i} - y_{i}\\\\
+\\dot {z_i} &= r[s(x_{i} - x_{R}) - z_{i}]\\\\
 \\end{aligned}
 ```
 where ``i,j=1,2 (i\\neq j)`` denote two oscillators.
@@ -1253,7 +1311,6 @@ It can be written in cartesian coordinates as [^Deco2017]
 \\dot{y} &= (\\mu -x^2 -y^2)y + \\omega x + b(x^2+y^2)x
 \\end{aligned}
 ```
-
 The dynamical analysis of the system is greatly facilitated by putting it in polar coordinates,
 where it takes the normal form of the supercritical Hopf bifurcation) [^Strogatz2015].
 ```math
@@ -1301,7 +1358,9 @@ end
 
 
 """
-    forced_pendulum(u0 = [0.1, 0.25]; ω = 2.2, f = 27.0, d = 0.2)
+```julia
+forced_pendulum(u0 = [0.1, 0.25]; ω = 2.2, f = 27.0, d = 0.2)
+```
 The standard forced damped pendulum with a sine response force. duffing oscillator, that satisfies the equation
 ```math
 \\ddot{x} + d \\dot{x} + \\sin(x) = f \\cos(\\omega t)
@@ -1323,13 +1382,19 @@ end
 
 """
 ```julia
-riddled_basins(u0=[0.5, 0.6, 0, 0]; γ=0.05, x̄ = 1.9, f₀=2.3, ω =3.5, x₀=1, y₀=0) → ds
+riddled_basins(u0 = [0.5, 0.6, 0, 0]; 
+    γ=0.05, 
+    x̄ = 1.9, 
+    f₀ = 2.3, 
+    ω = 3.5, 
+    x₀ = 1, 
+    y₀ = 0) 
 ```
 ```math
 \\begin{aligned}
 \\dot{x} &= v_x, \\quad \\dot{y} = v_z \\\\
-\\dot{v}_x &= -\\gamma v_x - [ -4x(1-x^2) +y^2] + f_0 \\sin(\\omega t)x_0 \\\\
-\\dot{v}_y &= -\\gamma v_y - 2y (x+\\bar{x}) + f_0 \\sin(\\omega t)y_0
+\\dot{v_x} &= -\\gamma v_x - [ -4x(1-x^2) +y^2] + f_0 \\sin(\\omega t)x_0 \\\\
+\\dot{v_y} &= -\\gamma v_y - 2y (x+\\bar{x}) + f_0 \\sin(\\omega t)y_0
 \\end{aligned}
 ```
 This 5 dimensional (time-forced) dynamical system was used by Ott et al [^OttRiddled2014]
@@ -1358,8 +1423,11 @@ end
 
 """
 ```julia
-morris_lecar(u0=[0.1, 0.1]; I = 0.15, V3 = 0.1, V1 = -0.00, V2 = 0.15, V4 = 0.1,
-    VCa = 1, VL = -0.5, VK = -0.7, gCa = 1.2, gK = 2, gL = 0.5, τ = 3) -> ds
+morris_lecar(u0 = [0.1, 0.1]; 
+    I = 0.15, V3 = 0.1, V1 = -0.00, 
+    V2 = 0.15, V4 = 0.1, VCa = 1, 
+    VL = -0.5, VK = -0.7, gCa = 1.2, 
+    gK = 2, gL = 0.5, τ = 3) 
 ```
 The Morris-Lecar model is ubiquitously used in computational neuroscience as a
 **simplified model for neuronal dynamics** (2D), and can also be in general as an
@@ -1409,11 +1477,10 @@ end
 
 """
 ```julia
-sakarya(u0= [-2.8976045, 3.8877978, 3.07465];
+sakarya(u0 = [-2.8976045, 3.8877978, 3.07465];
     a = 1,
     b = 1,
-    m = 1
-)
+    m = 1)
 ```
 ```math
 \\begin{aligned}
@@ -1429,7 +1496,7 @@ Its attractor arises due to merging of two disjoint bistable attractors [^Li2015
     Li, Chunbiao, et al (2015). A novel four-wing strange attractor born in bistability.
     IEICE Electronics Express 12.4.
 """
-function sakarya(u0= [-2.8976045, 3.8877978, 3.07465];
+function sakarya(u0=[-2.8976045, 3.8877978, 3.07465];
     a = 1,
     b = 1,
     m = 1
@@ -1450,11 +1517,11 @@ end
 
 """
 ```julia
-lorenz_bounded(u0=[-13.284881, -12.444334, 34.188198];
-    beta = 2.667,
+lorenz_bounded(u0 = [-13.284881, -12.444334, 34.188198];
+    β = 2.667,
     r = 64.0,
-    rho = 28.0,
-    sigma = 10.0
+    ρ = 28.0,
+    σ = 10.0
 )
 ```
 ```math
@@ -1493,7 +1560,7 @@ end
 
 """
 ```julia
-swinging_atwood(u0=[0.113296,1.5707963267948966,0.10992,0.17747]; m1=1.0, m2=4.5)
+swinging_atwood(u0 = [0.113296, 1.5707963267948966, 0.10992, 0.17747]; m1=1.0, m2=4.5)
 ```
 ```math
 \\begin{aligned}
@@ -1530,7 +1597,7 @@ end
 
 """
 ```julia
-guckenheimer_holmes(u0=[-0.55582369,0.05181624,0.37766104];
+guckenheimer_holmes(u0 = [-0.55582369,0.05181624,0.37766104];
     a = 0.4,
     b = 20.25,
     c = 3,
@@ -1575,13 +1642,13 @@ end
 
 """
 ```julia
-halvorsen(u0=[-8.6807408,-2.4741399,0.070775762]; a = 1.4, b = 4.0)
+halvorsen(u0 = [-8.6807408,-2.4741399,0.070775762]; a = 1.4, b = 4.0)
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= -a*x - b*(y + z) - y^2\\\\
-\\dot{y} &= -a*y - b*(z + x) - z^2\\\\
-\\dot{z} &= -a*z - b*(x + y) - x^2
+\\dot{x} &= -ax - b(y + z) - y^2\\\\
+\\dot{y} &= -ay - b(z + x) - z^2\\\\
+\\dot{z} &= -az - b(x + y) - x^2
 \\end{aligned}
 ```
 An algebraically-simple chaotic system with quadratic nonlinearity [^Sprott2010].
@@ -1718,9 +1785,9 @@ hyper_roessler(u0 = [-10.0, -6.0, 0.0, 10.0];
 ```math
 \\begin{aligned}
 \\dot{x} &= -y - z\\\\
-\\dot{y} &= x + a*y + w\\\\
-\\dot{z} &= b + x*z\\\\
-\\dot{w} &= -c*z + d*w
+\\dot{y} &= x + ay + w\\\\
+\\dot{z} &= b + xz\\\\
+\\dot{w} &= -cz + dw
 \\end{aligned}
 ```
 An extension of the Rössler system showchasing hyperchaos[^Rossler1979].
@@ -1760,10 +1827,10 @@ function hyper_lorenz(u0 = [-10.0, -6.0, 0.0, 10.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x) + w\\\\
-\\dot{y} &= x*(b - z) - y\\\\
-\\dot{z} &= x*y - c*z\\\\
-\\dot{w} &= d*w -y*z
+\\dot{x} &= a(y - x) + w\\\\
+\\dot{y} &= x(b - z) - y\\\\
+\\dot{z} &= xy - cz\\\\
+\\dot{w} &= dw - yz
 \\end{aligned}
 ```
 An extension of the Lorenz system showchasing hyperchaos[^Wang2008].
@@ -1805,10 +1872,10 @@ function hyper_qi(u0 = [10.0, 15.0, 20.0, 22.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x) + y*z\\\\
-\\dot{y} &= b*(x + y) - xz\\\\
-\\dot{z} &= - c*z - e*w + x*y\\\\
-\\dot{w} &= -d*w + f*z +x*y
+\\dot{x} &= a(y - x) + yz\\\\
+\\dot{y} &= b(x + y) - xz\\\\
+\\dot{z} &= - cz - ew + xy\\\\
+\\dot{w} &= -dw + fz + xy
 \\end{aligned}
 ```
 A hyperchaotic dynamical systems, showcasing a wide range of different behaviors,
@@ -1851,10 +1918,10 @@ function hyper_jha(u0 = [0.1, 0.1, 0.1, 0.1];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x) + w\\\\
-\\dot{y} &= x*(b - z) - y\\\\
-\\dot{z} &= x*y - c*z\\\\
-\\dot{w} &= d*w -x*z
+\\dot{x} &= a(y - x) + w\\\\
+\\dot{y} &= x(b - z) - y\\\\
+\\dot{z} &= xy - cz\\\\
+\\dot{w} &= dw - xz
 \\end{aligned}
 ```
 An extension of the Lorenz system showchasing hyperchaos[^Hussain2015].
@@ -1896,10 +1963,10 @@ function hyper_wang(u0 = [5.0, 1.0, 30.0, 1.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x)\\\\
-\\dot{y} &= -x*z + b*x + w\\\\
-\\dot{z} &= e*x^2 - c*z\\\\
-\\dot{w} &= -d*x
+\\dot{x} &= a(y - x)\\\\
+\\dot{y} &= -xz + bx + w\\\\
+\\dot{z} &= ex^2 - cz\\\\
+\\dot{w} &= -dx
 \\end{aligned}
 ```
 An extension of the Wang system showchasing hyperchaos[^Wang2009].
@@ -1931,18 +1998,18 @@ end
 """
 ```julia
 function hyper_xu(u0 = [2.0, -1.0, -2.0, -10.0];
-    a = 10.0,
-    b = 40.0,
-    c = 2.5,
-    d = 2.0,
-    e = 16.0)
+        a = 10.0,
+        b = 40.0,
+        c = 2.5,
+        d = 2.0,
+        e = 16.0)
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a*(y - x) + w\\\\
-\\dot{y} &= b*x + e*x*z\\\\
-\\dot{z} &= - c*z - x*y\\\\
-\\dot{w} &= x*z - d*y
+\\dot{x} &= a(y - x) + w\\\\
+\\dot{y} &= bx + exz\\\\
+\\dot{z} &= -cz - xy\\\\
+\\dot{w} &= xz - dy
 \\end{aligned}
 ```
 A system showchasing hyperchaos[^Letellier2007].
@@ -1982,10 +2049,10 @@ function hyper_bao(u0 = [5.0, 8.0, 12.0, 21.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a (y - x) + w\\\\
-\\dot{y} &= c y - x z\\\\
-\\dot{z} &= x y - b z\\\\
-\\dot{w} &= k x - d y z
+\\dot{x} &= a(y - x) + w\\\\
+\\dot{y} &= cy - xz\\\\
+\\dot{z} &= xy - bz\\\\
+\\dot{w} &= kx - dyz
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Lu system[^Bo-Cheng2008].
@@ -2025,10 +2092,10 @@ function hyper_cai(u0 = [1.0, 1.0, 20.0, 10.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a (y - x)\\\\
-\\dot{y} &= b x + c y - x z + w\\\\
-\\dot{z} &= -d z + y^2\\\\
-\\dot{w} &= -e x
+\\dot{x} &= a(y - x)\\\\
+\\dot{y} &= bx + cy - xz + w\\\\
+\\dot{z} &= -dz + y^2\\\\
+\\dot{w} &= -ex
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Finance system[^Cai2007].
@@ -2067,10 +2134,10 @@ function hyper_lu(u0 = [5.0, 8.0, 12.0, 21.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a (y - x) + w\\\\
-\\dot{y} &= c y - x z\\\\
-\\dot{z} &= x y - b z\\\\
-\\dot{w} &= d w + x z
+\\dot{x} &= a(y - x) + w\\\\
+\\dot{y} &= cy - xz\\\\
+\\dot{z} &= xy - bz\\\\
+\\dot{w} &= dw + xz
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Lu system[^Chen2006].
@@ -2108,10 +2175,10 @@ function hyper_pang(u0 = [1.0, 1.0, 10.0, 1.0];
 ```
 ```math
 \\begin{aligned}
-\\dot{x} &= a (y - x)\\\\
-\\dot{y} &= -x z + c y + w\\\\
-\\dot{z} &= x y - b z\\\\
-\\dot{w} &= -d x - d y
+\\dot{x} &= a(y - x)\\\\
+\\dot{y} &= -xz + cy + w\\\\
+\\dot{z} &= xy - bz\\\\
+\\dot{w} &= -dx - dy
 \\end{aligned}
 ```
 A system showchasing hyperchaos obtained from the Lu system[^Pang2011].
@@ -2137,4 +2204,349 @@ end
     du3 = x*y - b*z
     du4 = -d*x - d*y
     return SVector{4}(du1, du2, du3, du4)
+end
+
+"""
+```julia
+function brusselator(u0 = [0.1, 0.0]; 
+    a = -4.0, 
+    b = 1.0)
+```
+```math
+\\begin{aligned}
+\\dot{u} &= 1 + au + bu^2v\\\\
+\\dot{v} &= (-a-1)u - bu^2v\\\\
+\\end{aligned}
+```
+Oscillatory system showing the concentrations of two molecules in excess during the course of an autocatalytic reaction.
+
+"""
+function brusselator(u0 = [0.1, 0.0]; 
+    a = -4.0, 
+    b = 1.0)
+    return CoupledODEs(brusselator_rule, u0, [a, b])
+end
+
+@inbounds function brusselator_rule(u, p, t)
+    a, b = p
+    u, v = u
+    du = 1. + a*u + b*(u^2)*v
+    dv = (-a-1)*u - b*(u^2)*v
+    return SVector{2}(du, dv)
+end
+
+"""
+```julia
+function vanderpol(u0 = [0.1, 0.25]; μ = 1.5)
+```
+```math
+\\begin{aligned}
+\\dot{u} &= v\\\\
+\\dot{v} &= μ(1 - u^2)\\\\
+\\end{aligned}
+```
+Oscillating system with one degree of freedom and non-linear dampening (dissipative force)[^VanderPol1926]
+
+[^VanderPol1926]: 
+    Pol, V. der (1926)
+    On “relaxation-oscillations”
+    The London, Edinburgh, and Dublin Philosophical Magazine and Journal of Science, 2(11), 978–992.
+"""
+function vanderpol(u0 = [0.1, 0.25]; μ = 1.5)
+    return CoupledODEs(vanderpol_rule, u0, [μ])
+end
+
+@inbounds function vanderpol_rule(u, p, t)
+    μ = p[1]
+    u, v = u
+    du = v
+    dv = μ*(1 - u^2)*v - u
+    return SVector{2}(du, dv)
+end
+
+"""
+```julia
+function rabinovich_fabrikant(u0 = [-1, 0.0, 0.5]; α = 0.14, γ = 0.10)
+```
+```math
+\\begin{aligned}
+\\dot{u} &= v(w - 1 + u^2) + γu\\\\
+\\dot{v} &= u(3w + 1 - u^2) + γv\\\\
+\\dot{w} &= -2w(α + uv)
+\\end{aligned}
+```
+System that exihibits chaotic behaviour for certain starting conditions.[^RabinovichFabrikant1979] Contains five hyperbolic equilibrium points, one at the origin and four others dependent on choice of α and γ. 
+
+[^RabinovichFabrikant1979]: 
+    Rabinovich, Mikhail I.; Fabrikant, A. L. (1979). 
+    Stochastic Self-Modulation of Waves in Nonequilibrium Media. 
+    Institute of Applied Physics, Academy of Sciences of the USSR, 50(2) 311-317.
+"""
+function rabinovich_fabrikant(u0 = [-1, 0.0, 0.5]; α = 0.14, γ = 0.10)
+    return CoupledODEs(rabinovich_fabrikant_rule, u0, [α, γ])
+end
+
+@inbounds function rabinovich_fabrikant_rule(u, p, t)
+    α, γ = p
+    u, v, w = u
+    du = v*(w - 1 + u^2) + γ*u
+    dv = u*(3*w + 1 - u^2) + γ*v
+    dw = -2*w*(α + u*v)
+    return SVector{3}(du, dv, dw)
+end
+
+""" 
+```julia
+function duffing(u0 = [0.1, 0.25]; d = 0.1, β = 1.0)
+```
+```math
+\\begin{aligned}
+\\dot{u} &= v\\\\
+\\dot{v} &= -dv - βu - u^3\\\\
+\\end{aligned}
+```
+Model of a damped and driven oscillator[^Duffing1918]
+
+[^Duffing1918]:
+    Duffing, G.
+    Erzwungene schwingungen bei veränderlicher eigenfrequenz und ihre technische bedeutung
+    vol. Heft 41/42
+"""
+function duffing(u0 = [0.1, 0.25]; d = 0.1, β = 1.0)
+    return CoupledODEs(duffing_rule, u0, [d, β])
+end
+
+@inbounds function duffing_rule(u, p, t)
+    d, β = p
+    u, v = u
+    du = v
+    dv = -d*v - β*u - u^3
+    return SVector{2}(du, dv)
+end
+
+""" 
+```julia
+function fitzhugh_nagumo(u0 = [2.0, 2.0]; 
+    a = 0.7, 
+    b = 0.8, 
+    τ = 12.5, 
+    R = 0.1, 
+    I = 6.0)
+```
+```math
+\\begin{aligned}
+\\dot{u} &= u - (u^3)/3 - v + RI\\\\
+\\dot{v} &= u/τ + a/τ + bv/τ \\\\
+\\end{aligned}
+```
+Extension of the Van der Pol oscillator as a model for the action potential of neurons.[^FitzHughNagumo1961][^Nagumo1962]
+v = membrance voltage
+w = sodium channel activation/potassium channel de-activation
+I_{ext} = external stimulus
+
+[^FitzHughNagumo1961]:
+    FitzHugh, R. 
+    Impulses and Physiological States in Theoretical Models of Nerve Membrane
+    Biophysical J. 1:445–466
+[^Nagumo1962]:
+    Nagumo, J., Arimoto, S., Yoshizawa, S. (October 1962)
+    An Active Pulse Transmission Line Simulating Nerve Axon
+    Proceedings of the IRE. 50 (10): 2061–2070.
+"""
+function fitzhugh_nagumo(u0 = [2., 2.]; a = 0.7, b = 0.8, τ = 12.5, R = 0.1, I = 6.)
+    return CoupledODEs(fitzhugh_nagumo_rule, u0, [a, b, τ, R, I])
+end
+
+@inbounds function fitzhugh_nagumo_rule(u, p, t)
+    a, b, τ, R, I = p
+    u, v = u
+    du = u - (u^3)/3 - v + R*I
+    dv = u/τ + a/τ - (b/τ)*v
+    return SVector{2}(du, dv)
+end
+
+""" 
+```julia
+function langford(u0 = [0.1, 0.0, 0.0]; 
+    a = 0.95, 
+    b = 0.7, 
+    c = 0.6, 
+    d = 3.5, 
+    e = 0.25, 
+    f = 0.1)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= x(z - b) - dy\\\\
+\\dot{y} &= dz + y(z-b) \\\\
+\\dot{z} &= c + az - (z^3)/3 - x^2 + fzx^3\\\\
+\\end{aligned}
+```
+
+"""
+function langford(u0 = [0.1, 0.0, 0.0]; a = 0.95, b = 0.7, c = 0.6, d = 3.5, e = 0.25, f = 0.1)
+    ps = [a, b, c, d, e, f]
+    return CoupledODEs(langford_rule, u0, ps)
+end
+
+@inbounds function langford_rule(u, p, t)
+    a, b, c, d, e, f = p
+    x, y, z = u
+    dx = x*(z - b) - d*y
+    dy = d*x + y*(z - b)
+    dz = c + a*z - (z^3)/3 - x^2 + f*z*(x^3)
+    return SVector{3}(dx, dy, dz)
+end
+
+""" 
+```julia
+function three_scroll(u0 = [-0.29, -0.25, -0.59]; 
+    a = 32.48, 
+    b = 45.84, 
+    c = 1.18, 
+    d = 0.13, 
+    e = 0.57, 
+    f = 14.7)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= a(y - x) + dxz\\\\
+\\dot{y} &= bx - xz + fy\\\\
+\\dot{z} &= cz + xy - e(x^2)\\\\
+\\end{aligned}
+```
+
+"""
+function three_scroll(u0 = [-0.29, -0.25, -0.59]; a = 32.48, b = 45.84, c = 1.18, d = 0.13, e = 0.57, f = 14.7)
+    ps = [a, b, c, d, e, f]
+    return CoupledODEs(three_scroll_f, u0, ps)
+end
+
+@inbounds function three_scroll_f(u, p, t)
+    a, b, c, d, e, f = p
+    x, y, z = u
+    dx = a*(y - x) + d*x*z
+    dy = b*x - x*z + f*y
+    dz = c*z + x*y - e*(x^2)
+    return SVector{3}(dx, dy, dz)
+end
+
+""" 
+```julia
+function henon_heiles(u0 = ones(1,4); λ = 1.)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= p_x\\\\
+\\dot{dp_x} &= -x - 2λxy\\\\
+\\dot{y} &= p_y\\\\
+\\dot{dp_y} &= -y - λ\\\\
+\\end{aligned}
+```
+Non-linear motion of a star around a galatic center. 
+"""
+function henon_heiles(u0 = ones(1,4); λ = 1.)
+    Random.seed!(1)
+    u0 = 0.2*rand(1,4) .- 0.1*u0
+    ps = [λ]
+    return CoupledODEs(henon_heiles_rule, u0, ps)
+end
+
+@inbounds function henon_heiles_rule(u, p, t)
+    λ = p[1]
+    x, p_x, y, p_y = u
+    dx = p_x
+    dp_x = -x - 2*λ*x*y
+    dy = p_y
+    dp_y = -y - λ*(x^2 - y^2)
+    return SVector{4}(dx, dp_x, dy, dp_y)
+end 
+
+""" 
+```julia
+function dadras(u0 = [1.1, 2.1, -2.0]; 
+    a = 3.0, 
+    b = 2.7, 
+    c = 1.7, 
+    d = 2.0, 
+    e = 9.0)
+```
+```math
+\\begin{aligned}
+\\dot{x} &= y - ax + byz\\\\
+\\dot{y} &= cy - xz + z\\\\
+\\dot{z} &= dxy - ez\\\\
+\\end{aligned}
+```
+
+"""
+
+function dadras(u0 = [1.1, 2.1, -2.0]; a = 3.0, b = 2.7, c = 1.7, d = 2.0, e = 9.0)
+    ps = [a, b, c, d, e]
+    return CoupledODEs(dadras_rule, u0, ps)
+end
+
+@inbounds function dadras_rule(u, p, t)
+    a, b, c, d, e = p
+    x, y, z = u
+    dx = y - a*x + b*y*z
+    dy = c*y - x*z + z
+    dz = d*x*y - e*z
+    return SVector{3}(dx, dy, dz)
+end
+
+""" 
+```julia
+function chen(u0 = [5.0, 10.0, 10.0], α = 5.0, β = -10.0, δ = -0.38) 
+```
+```math
+\\begin{aligned}
+\\dot{x} &= αx - yz\\\\
+\\dot{y} &= βy + xz\\\\
+\\dot{z} &= δz + xy/3\\\\
+\\end{aligned}
+```
+General system exhibiting chaotic behaviour.
+"""
+
+function chen(u0 = [5.0, 10.0, 10.0], α = 5.0, β = -10.0, δ = -0.38) 
+    ps = [α, β, δ]
+    return CoupledODEs(chen_rule, u0, ps)
+end
+
+@inbounds function chen_rule(u, p, t)
+    α, β, δ = p
+    x, y, z = u
+    dx = α*x - y*z
+    dy = β*y + x*z
+    dz = δ*z + x*y/3
+    return SVector{3}(dx, dy, dz)
+end
+
+""" 
+```julia
+function fourwing(u0 = [1.0 ,-0.18, -0.4]; a = 0.2, b = 0.01, c = -0.4) 
+```
+```math
+\\begin{aligned}
+\\dot{x} &= ax + yz\\\\
+\\dot{y} &= bx + cy - xz\\\\
+\\dot{z} &= -z - xy\\\\
+\\end{aligned}
+```
+
+"""
+
+function fourwing(u0 = [1.0 ,-0.18, -0.4]; a = 0.2, b = 0.01, c = -0.4)
+    ps = [a, b, c]
+    return CoupledODEs(fourwing_rule, u0, ps)
+end
+
+@inbounds function fourwing_rule(u, p, t)
+    a, b, c = p
+    x, y, z = u
+    dx = a*x + y*z
+    dy = b*x + c*y - x*z
+    dz = -z - x*y
+    return SVector{3}(dx, dy, dz)
 end
