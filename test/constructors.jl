@@ -79,7 +79,7 @@ end
         :rabinovich_fabrikant,
         :duffing,
         :fitzhugh_nagumo,
-        :aizawa,
+        :langford,
         :three_scroll,
         :henon_heiles,
         :dadras,

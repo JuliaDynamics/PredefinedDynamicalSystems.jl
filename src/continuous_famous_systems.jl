@@ -1,3 +1,5 @@
+using Random
+
 """
 ```julia
 lorenz(u0 = [0.0, 10.0, 0.0]; σ = 10.0, ρ = 28.0, β = 8/3)
@@ -2419,10 +2421,10 @@ function three_scroll(u0 = [-0.29, -0.25, -0.59];
 """
 function three_scroll(u0 = [-0.29, -0.25, -0.59]; a = 32.48, b = 45.84, c = 1.18, d = 0.13, e = 0.57, f = 14.7)
     ps = [a, b, c, d, e, f]
-    return CoupledODEs(three_scroll_f, u0, ps)
+    return CoupledODEs(three_scroll_rule, u0, ps)
 end
 
-@inbounds function three_scroll_f(u, p, t)
+@inbounds function three_scroll_rule(u, p, t)
     a, b, c, d, e, f = p
     x, y, z = u
     dx = a*(y - x) + d*x*z
@@ -2433,7 +2435,7 @@ end
 
 """ 
 ```julia
-function henon_heiles(u0 = ones(1,4); λ = 1.)
+function henon_heiles(u0 = ones(1,4); λ = 1.0)
 ```
 ```math
 \\begin{aligned}
@@ -2443,11 +2445,10 @@ function henon_heiles(u0 = ones(1,4); λ = 1.)
 \\dot{dp_y} &= -y - λ\\\\
 \\end{aligned}
 ```
-Non-linear motion of a star around a galatic center. 
+Non-linear motion of a star around a galatic center.
 """
-function henon_heiles(u0 = ones(1,4); λ = 1.)
+function henon_heiles(u0 = 0.2*rand(1,4) .- 0.1*ones(1,4); λ = 1.)
     Random.seed!(1)
-    u0 = 0.2*rand(1,4) .- 0.1*u0
     ps = [λ]
     return CoupledODEs(henon_heiles_rule, u0, ps)
 end
