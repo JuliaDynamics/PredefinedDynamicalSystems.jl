@@ -509,20 +509,26 @@ function ikedamap(u0=[1.0, 1.0]; a=1.0, b=1.0, c=0.4, d =6.0)
     return DeterministicIteratedMap(ikedamap_rule, u0, [a,b,c,d])
 end
 @inbounds function ikedamap_rule(u, p, n)
-    a,b,c,d  = p
+    a, b, c, d = p
     t = c - d/(1 + u[1]^2 + u[2]^2)
     dx = a + b*(u[1]*cos(t) - u[2]*sin(t))
     dy = b*( u[1]*sin(t) + u[2]*cos(t) )
     return SVector{2}(dx, dy)
 end
 @inbounds function ikedamap_jacob(u, p, n)
-    #Checked the calculation of the jacobian with the calculations here https://www.math.arizona.edu/~ura-reports/001/huang.pojen/2000_Report.html. It has a wrong sign in the model definition, but the Jacobian fits.
-    a,b,c,d = p
-    x,y = u
-    t = c - d/(1 + x^2 + y^2)
-    aux = 2*d/(1+x^2+y^2)
-    return SMatrix{2,2}(b*(cos(t)-x^2*sin(t)*aux -x*y*cos(t)*aux), b*(sin(t) +x^2*cos(t)*aux)-x*y*sin(t)*aux,
-    b*(-sin(t) -x*y*sin(t)*aux -y^2*cos(t)*aux), b*(cos(t) -x*y*cos(t)*aux -y^2*sin(t)*aux))
+    a, b, c, d = p
+    x, y = u
+    t  = c - d/(1 + x^2 + y^2)
+    s, cc = sin(t), cos(t)
+    r2 = 1 + x^2 + y^2
+    aux = 2d/(r2^2)
+
+    J11 = b*( cc - aux*( x^2*s + x*y*cc) )
+    J12 = b*( -s - aux*( x*y*s + y^2*cc) )
+    J21 = b*(  s + aux*( x^2*cc - x*y*s) )
+    J22 = b*( cc + aux*( x*y*cc - y^2*s) )
+
+    return @SMatrix [J11 J12; J21 J22]
 end
 
 
